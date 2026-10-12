@@ -47,7 +47,7 @@ function setMark(marks: Mark[], cell: number, mark: Mark): Mark[] {
 
 function toggleCross(state: GameState, cell: number): GameState {
   const before = state.marks[cell]
-  if (before === 'cat') return state
+  if (before === 'cat' || before === 'miss') return state
   const after: Mark = before === 'empty' ? 'cross' : 'empty'
   return {
     ...state,
@@ -58,7 +58,7 @@ function toggleCross(state: GameState, cell: number): GameState {
 }
 
 function placeCat(state: GameState, cell: number, fromDoubleTap: boolean, autoCross: boolean): GameState {
-  if (state.marks[cell] === 'cat') return state
+  if (state.marks[cell] === 'cat' || state.marks[cell] === 'miss') return state
   let { marks, history } = state
 
   // The first tap of a double-tap already toggled this cell. Take that back so the
@@ -101,7 +101,7 @@ function placeCat(state: GameState, cell: number, fromDoubleTap: boolean, autoCr
   const lost = lives === 0
   return {
     ...state,
-    marks: setMark(marks, cell, 'cross'),
+    marks: setMark(marks, cell, 'miss'),
     history,
     lives,
     status: lost ? 'lost' : 'playing',
@@ -129,7 +129,7 @@ function undo(state: GameState): GameState {
   if (!patch) return state
   const marks = state.marks.slice()
   patch.cells.forEach((cell, i) => {
-    marks[cell] = patch.before[i]
+    if (marks[cell] !== 'miss') marks[cell] = patch.before[i]
   })
   return {
     ...state,

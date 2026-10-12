@@ -35,7 +35,7 @@ export function getHint(state: GameState): Hint {
   // The logic board: every cat placed, every crossed cell no longer a candidate.
   const board = createBoard(size, regions)
   for (let i = 0; i < marks.length; i++) if (marks[i] === 'cat') boardPlaceCat(board, i)
-  for (let i = 0; i < marks.length; i++) if (marks[i] === 'cross') board.cand[i] = false
+  for (let i = 0; i < marks.length; i++) if (marks[i] === 'cross' || marks[i] === 'miss') board.cand[i] = false
 
   // 2. Empty cells a placed cat rules out. Only happens with auto-cross off or after removing a cross.
   for (let i = 0; i < marks.length; i++) {

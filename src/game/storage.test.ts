@@ -17,6 +17,7 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals())
 
 const puzzle = generatePuzzle('free-1', 5)
+const wrongCell = () => (puzzle.solution[0] === 0 ? 1 : 0)
 
 describe('saveGame / loadGame', () => {
   it('strips lastEvent when saving and loads it as null', () => {
@@ -51,6 +52,20 @@ describe('saveGame / loadGame', () => {
   it('does not load a state saved under the other mode', () => {
     store.set('meowdoku:v1:game:daily', JSON.stringify(createGameState('free', 'easy', puzzle)))
     expect(loadGame('daily')).toBeNull()
+  })
+
+  it('round-trips a missed cell', () => {
+    const s = reducer(createGameState('free', 'easy', puzzle), { type: 'placeCat', cell: wrongCell() })
+    expect(s.marks).toContain('miss')
+    saveGame(s)
+    expect(loadGame('free')).toEqual({ ...s, lastEvent: null })
+  })
+
+  it('loads a saved game that has no misses', () => {
+    const s = createGameState('free', 'easy', puzzle)
+    s.marks[0] = 'cross'
+    store.set('meowdoku:v1:game:free', JSON.stringify(s))
+    expect(loadGame('free')?.marks[0]).toBe('cross')
   })
 
   it('clearGame removes the save', () => {

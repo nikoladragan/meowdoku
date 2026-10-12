@@ -22,7 +22,12 @@ interface Props {
   onTap: (cell: number) => void
 }
 
-const MARK_LABEL: Record<Mark, string> = { empty: 'empty', cross: 'crossed', cat: 'cat' }
+const MARK_LABEL: Record<Mark, string> = {
+  empty: 'empty',
+  cross: 'crossed',
+  cat: 'cat',
+  miss: 'missed, no cat here',
+}
 
 export type CellAnim = 'popCross' | 'popCat' | 'ripple' | 'miss' | 'undo' | 'hop'
 
@@ -46,6 +51,7 @@ export const Cell = memo(function Cell({
     styles.cell,
     borders.right && styles.right,
     borders.bottom && styles.bottom,
+    mark === 'miss' && styles.missed,
     hintState && styles[hintState],
     anim && styles[anim],
   ]
@@ -66,6 +72,7 @@ export const Cell = memo(function Cell({
     >
       {mark === 'cat' && <Cat fur={fur} />}
       {mark === 'cross' && <Cross />}
+      {mark === 'miss' && <Cross miss />}
       {mark === 'empty' && debugCat && <PawDot />}
     </button>
   )

@@ -31,6 +31,16 @@
   transform: none;
 }
 
+/* A cell where a wrong cat was tried: red-tinted, with a red cross. */
+.missed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--danger);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 /* Hint highlighting: target cells get a ring, related cells a soft tint, others dim. */
 .dim > * {
   opacity: 0.45;

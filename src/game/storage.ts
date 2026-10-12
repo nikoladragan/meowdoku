@@ -31,7 +31,7 @@ const isInt = (v: unknown, min: number, max: number): v is number =>
   typeof v === 'number' && Number.isInteger(v) && v >= min && v <= max
 const isIntArray = (v: unknown, len: number, max: number): v is number[] =>
   Array.isArray(v) && v.length === len && v.every((x) => isInt(x, 0, max))
-const MARKS: Mark[] = ['empty', 'cross', 'cat']
+const MARKS: Mark[] = ['empty', 'cross', 'cat', 'miss']
 const STATUSES: Status[] = ['playing', 'won', 'lost']
 
 function isPuzzle(v: unknown): v is Puzzle {

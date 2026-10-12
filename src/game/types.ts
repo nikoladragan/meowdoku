@@ -10,7 +10,8 @@ export interface Puzzle {
   level: number // hardest deduction technique needed, 1 to 5
 }
 
-export type Mark = 'empty' | 'cross' | 'cat'
+// 'miss' is a cross left by a wrong cat guess. It is permanent: not undoable and not clearable.
+export type Mark = 'empty' | 'cross' | 'cat' | 'miss'
 export type Mode = 'free' | 'daily'
 export type Status = 'playing' | 'won' | 'lost'
 

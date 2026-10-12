@@ -40,9 +40,9 @@ describe('placeCat', () => {
     expect(s.history).toHaveLength(1)
   })
 
-  it('costs a life and leaves a cross on a wrong cell, without history', () => {
+  it('costs a life and leaves a miss mark on a wrong cell, without history', () => {
     s = reducer(s, { type: 'placeCat', cell: bad(0) })
-    expect(s.marks[bad(0)]).toBe('cross')
+    expect(s.marks[bad(0)]).toBe('miss')
     expect(s.lives).toBe(2)
     expect(s.lastEvent?.kind).toBe('miss')
     expect(s.history).toHaveLength(0)
@@ -185,7 +185,7 @@ describe('undo', () => {
     expect(s.lives).toBe(2)
     s = reducer(s, { type: 'undo' })
     expect(s.lives).toBe(2)
-    expect(s.marks[bad(0)]).toBe('cross')
+    expect(s.marks[bad(0)]).toBe('miss')
   })
 
   it('a double-tap cat undoes back to the state before the first tap', () => {
@@ -203,12 +203,34 @@ describe('undo', () => {
     expect(s.history).toHaveLength(1)
   })
 
+  it('a miss stays a miss: tapping, double-tapping and undo leave it alone', () => {
+    s = reducer(s, { type: 'toggleCross', cell: bad(0) })
+    s = reducer(s, { type: 'toggleCross', cell: bad(0) })
+    s = reducer(s, { type: 'placeCat', cell: bad(0) })
+    expect(s.marks[bad(0)]).toBe('miss')
+    expect(s.lives).toBe(2)
+    const after = reducer(s, { type: 'toggleCross', cell: bad(0) })
+    expect(after).toBe(s)
+    expect(reducer(s, { type: 'placeCat', cell: bad(0) })).toBe(s)
+    s = reducer(s, { type: 'undo' })
+    expect(s.marks[bad(0)]).toBe('miss')
+  })
+
   it('does nothing on an empty history or after the game ends', () => {
     expect(reducer(s, { type: 'undo' })).toBe(s)
     s = reducer(s, { type: 'toggleCross', cell: 3 })
     for (let r = 0; r < 3; r++) s = reducer(s, { type: 'placeCat', cell: bad(r) })
     expect(s.status).toBe('lost')
     expect(reducer(s, { type: 'undo' })).toBe(s)
+  })
+})
+
+describe('retry clears misses', () => {
+  it('resets a missed cell', () => {
+    let s = createGameState('free', 'easy', puzzle)
+    s = reducer(s, { type: 'placeCat', cell: bad(0) })
+    s = reducer(s, { type: 'retry' })
+    expect(s.marks).not.toContain('miss')
   })
 })
 
