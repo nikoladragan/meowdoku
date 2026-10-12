@@ -5,6 +5,7 @@ import { LABELS, SIZES, type GameState } from '../../game/types'
 import { useDoubleTap } from '../../hooks/useDoubleTap'
 import { useGame } from '../../hooks/useGame'
 import { Board } from '../Board/Board'
+import { Controls } from '../Controls/Controls'
 import { LoseDialog, WinDialog } from '../GameDialogs/GameDialogs'
 import { BackIcon, GearIcon } from '../icons/icons'
 import { Lives } from '../Lives/Lives'
@@ -19,7 +20,7 @@ interface Props {
 }
 
 export function Game({ initial, autoCross, onBack, onSettings }: Props) {
-  const { state, start, toggleCross, placeCat, retry } = useGame(() => initial, autoCross)
+  const { state, start, toggleCross, placeCat, undo, retry } = useGame(() => initial, autoCross)
   const [loading, setLoading] = useState(false)
   const onCellTap = useDoubleTap({ onCross: toggleCross, onCat: placeCat })
   const size = SIZES[state.difficulty]
@@ -50,8 +51,11 @@ export function Game({ initial, autoCross, onBack, onSettings }: Props) {
         <Loading />
       ) : (
         <>
-          <Board puzzle={state.puzzle} marks={state.marks} onCellTap={onCellTap} />
-          <p className={styles.reminder}>Tap to cross out. Double-tap to place a cat.</p>
+          <div className={styles.main}>
+            <Board puzzle={state.puzzle} marks={state.marks} onCellTap={onCellTap} />
+            <p className={styles.reminder}>Tap to cross out. Double-tap to place a cat.</p>
+          </div>
+          <Controls canUndo={state.status === 'playing' && state.history.length > 0} onUndo={undo} />
         </>
       )}
       {state.status === 'won' && !loading && <WinDialog lives={state.lives} daily={daily} onNext={nextPuzzle} onHome={onBack} />}

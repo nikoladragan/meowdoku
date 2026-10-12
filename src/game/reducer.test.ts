@@ -154,3 +154,59 @@ describe('auto-cross', () => {
     expect(s.history[0].cells).toHaveLength(1 + expected().length)
   })
 })
+
+describe('undo', () => {
+  it('restores a toggle', () => {
+    s = reducer(s, { type: 'toggleCross', cell: 3 })
+    s = reducer(s, { type: 'undo' })
+    expect(s.marks[3]).toBe('empty')
+    expect(s.history).toHaveLength(0)
+    expect(s.lastEvent?.kind).toBe('undo')
+  })
+
+  it('restores a cat together with its auto-crosses in one step', () => {
+    const before = s.marks.slice()
+    s = reducer(s, { type: 'placeCat', cell: good(1), autoCross: true })
+    expect(s.marks.filter((m) => m === 'cross').length).toBeGreaterThan(0)
+    s = reducer(s, { type: 'undo' })
+    expect(s.marks).toEqual(before)
+  })
+
+  it('puts a crossed cell back to crossed, not empty, when a cat replaced the cross', () => {
+    s = reducer(s, { type: 'toggleCross', cell: good(0) })
+    s = reducer(s, { type: 'placeCat', cell: good(0) }) // not a double-tap: the cross stays in history
+    s = reducer(s, { type: 'undo' })
+    expect(s.marks[good(0)]).toBe('cross')
+  })
+
+  it('never gives a life back', () => {
+    s = reducer(s, { type: 'placeCat', cell: bad(0) })
+    expect(s.lives).toBe(2)
+    s = reducer(s, { type: 'undo' })
+    expect(s.lives).toBe(2)
+    expect(s.marks[bad(0)]).toBe('cross')
+  })
+
+  it('a double-tap cat undoes back to the state before the first tap', () => {
+    const before = s.marks.slice()
+    s = reducer(s, { type: 'toggleCross', cell: good(0) })
+    s = reducer(s, { type: 'placeCat', cell: good(0), fromDoubleTap: true })
+    s = reducer(s, { type: 'undo' })
+    expect(s.marks).toEqual(before)
+    expect(s.history).toHaveLength(0)
+  })
+
+  it('a miss adds nothing to the history', () => {
+    s = reducer(s, { type: 'toggleCross', cell: 3 })
+    s = reducer(s, { type: 'placeCat', cell: bad(0) })
+    expect(s.history).toHaveLength(1)
+  })
+
+  it('does nothing on an empty history or after the game ends', () => {
+    expect(reducer(s, { type: 'undo' })).toBe(s)
+    s = reducer(s, { type: 'toggleCross', cell: 3 })
+    for (let r = 0; r < 3; r++) s = reducer(s, { type: 'placeCat', cell: bad(r) })
+    expect(s.status).toBe('lost')
+    expect(reducer(s, { type: 'undo' })).toBe(s)
+  })
+})

@@ -7,6 +7,7 @@ export type Action =
   | { type: 'start'; state: GameState }
   | { type: 'toggleCross'; cell: number }
   | { type: 'placeCat'; cell: number; fromDoubleTap?: boolean; autoCross?: boolean }
+  | { type: 'undo' }
   | { type: 'retry' }
 
 export function createGameState(mode: Mode, difficulty: Difficulty, puzzle: Puzzle): GameState {
@@ -120,6 +121,22 @@ function placeCat(state: GameState, cell: number, fromDoubleTap: boolean, autoCr
   }
 }
 
+// Takes back the newest patch. Never touches lives, hintsUsed or elapsedMs.
+function undo(state: GameState): GameState {
+  const patch = state.history[state.history.length - 1]
+  if (!patch) return state
+  const marks = state.marks.slice()
+  patch.cells.forEach((cell, i) => {
+    marks[cell] = patch.before[i]
+  })
+  return {
+    ...state,
+    marks,
+    history: state.history.slice(0, -1),
+    lastEvent: event(state, 'undo', -1),
+  }
+}
+
 export function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
     case 'start':
@@ -130,6 +147,8 @@ export function reducer(state: GameState, action: Action): GameState {
         attempt: state.attempt + 1,
         lastEvent: null,
       }
+    case 'undo':
+      return state.status === 'playing' ? undo(state) : state
     case 'toggleCross':
       return state.status === 'playing' ? toggleCross(state, action.cell) : state
     case 'placeCat':

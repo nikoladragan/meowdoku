@@ -22,7 +22,8 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     (cell: number) => dispatch({ type: 'placeCat', cell, fromDoubleTap: true, autoCross }),
     [autoCross],
   )
+  const undo = useCallback(() => dispatch({ type: 'undo' }), [])
   const retry = useCallback(() => dispatch({ type: 'retry' }), [])
 
-  return { state, start, toggleCross, placeCat, retry }
+  return { state, start, toggleCross, placeCat, undo, retry }
 }
