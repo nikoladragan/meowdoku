@@ -159,6 +159,7 @@ describe('undo', () => {
   it('restores a toggle', () => {
     s = reducer(s, { type: 'toggleCross', cell: 3 })
     s = reducer(s, { type: 'undo' })
+    expect(s.lastEvent?.restored).toEqual([3])
     expect(s.marks[3]).toBe('empty')
     expect(s.history).toHaveLength(0)
     expect(s.lastEvent?.kind).toBe('undo')

@@ -3,3 +3,33 @@
   gap: 4px;
   align-items: center;
 }
+
+.slot {
+  position: relative;
+  display: inline-flex;
+}
+
+.ghost {
+  position: absolute;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ghost {
+    display: inline-flex;
+    animation: drop 650ms ease-in forwards;
+  }
+}
+
+@keyframes drop {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(40px) rotate(25deg);
+  }
+}

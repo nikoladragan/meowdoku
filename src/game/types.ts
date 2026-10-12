@@ -17,6 +17,7 @@ export interface GameEvent {
   kind: 'cross' | 'uncross' | 'cat' | 'miss' | 'undo' | 'win' | 'lose'
   cell: number // the cell the player acted on (-1 for undo)
   autoCrossed: number[] // cells crossed automatically by this cat, otherwise empty
+  restored: number[] // cells put back by an undo, otherwise empty
   seq: number // increments on every event
 }
 

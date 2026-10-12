@@ -18,3 +18,13 @@
     --board-size: min(100dvh - 64px, 100vw - 190px, 640px);
   }
 }
+
+.lost {
+  filter: grayscale(1) brightness(0.95);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .board {
+    transition: filter 500ms ease-out;
+  }
+}

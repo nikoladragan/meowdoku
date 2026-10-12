@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import confetti from 'canvas-confetti'
+import { useEffect, useState } from 'react'
 import { getHint, type Hint } from '../../game/hints'
 import { hintText } from '../../game/hintText'
 import { formatDay } from '../../game/daily'
@@ -65,6 +66,19 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
     else toggleCross(hint.cells[0])
   }
 
+  // The result sheet waits for the win or lose animation (a loaded finished game shows it at once).
+  const [readyFor, setReadyFor] = useState<GameEvent | null>(null)
+  const finishEvent = state.lastEvent
+  useEffect(() => {
+    if (finishEvent?.kind !== 'win' && finishEvent?.kind !== 'lose') return
+    if (finishEvent.kind === 'win') {
+      confetti({ particleCount: 140, spread: 80, origin: { y: 0.55 }, disableForReducedMotion: true })
+    }
+    const id = setTimeout(() => setReadyFor(finishEvent), finishEvent.kind === 'win' ? 900 : 600)
+    return () => clearTimeout(id)
+  }, [finishEvent])
+  const resultReady = finishEvent === null || readyFor === finishEvent
+
   const nextPuzzle = async () => {
     setLoading(true)
     const puzzle = await newFreePuzzle(state.difficulty)
@@ -94,7 +108,14 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
       ) : (
         <>
           <div className={styles.main}>
-            <Board puzzle={state.puzzle} marks={state.marks} hint={hint} onCellTap={onCellTap} />
+            <Board
+              puzzle={state.puzzle}
+              marks={state.marks}
+              hint={hint}
+              lastEvent={state.lastEvent}
+              status={state.status}
+              onCellTap={onCellTap}
+            />
             <p className={styles.reminder}>Tap to cross out. Double-tap to place a cat.</p>
           </div>
           <div className={styles.side}>
@@ -110,14 +131,19 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
           )}
         </>
       )}
-      {state.status === 'won' && !loading && <WinDialog
+      {state.status === 'won' && !loading && resultReady && (
+        <WinDialog
           lives={state.lives}
           daily={daily}
           timeMs={state.elapsedMs}
           isBest={winResult?.isBest ?? false}
           counts={winResult?.counts ?? true}
-          hintsUsed={state.hintsUsed} onNext={nextPuzzle} onHome={onBack} />}
-      {state.status === 'lost' && <LoseDialog onRetry={retry} onHome={onBack} />}
+          hintsUsed={state.hintsUsed}
+          onNext={nextPuzzle}
+          onHome={onBack}
+        />
+      )}
+      {state.status === 'lost' && resultReady && <LoseDialog onRetry={retry} onHome={onBack} />}
     </div>
   )
 }

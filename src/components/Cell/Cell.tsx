@@ -18,10 +18,14 @@ interface Props {
   fur: Fur
   debugCat: boolean
   hintState: HintCellState
+  anim: CellAnim | null
+  animDelay: number
   onTap: (cell: number) => void
 }
 
 const MARK_LABEL: Record<Mark, string> = { empty: 'empty', cross: 'crossed', cat: 'cat' }
+
+export type CellAnim = 'popCross' | 'popCat' | 'ripple' | 'miss' | 'undo' | 'hop'
 
 export type HintCellState = 'target' | 'related' | 'reason' | 'dim' | null
 
@@ -36,6 +40,8 @@ export const Cell = memo(function Cell({
   fur,
   debugCat,
   hintState,
+  anim,
+  animDelay,
   onTap,
 }: Props) {
   const cls = [
@@ -45,6 +51,7 @@ export const Cell = memo(function Cell({
     borders.bottom && styles.bottom,
     borders.left && styles.left,
     hintState && styles[hintState],
+    anim && styles[anim],
   ]
     .filter(Boolean)
     .join(' ')
@@ -52,7 +59,12 @@ export const Cell = memo(function Cell({
     <button
       type="button"
       className={cls}
-      style={{ '--cell-bg': `var(--region-${colorIndex})` } as React.CSSProperties}
+      style={
+        {
+          '--cell-bg': `var(--region-${colorIndex})`,
+          '--anim-delay': `${animDelay}ms`,
+        } as React.CSSProperties
+      }
       aria-label={`Row ${row + 1}, column ${col + 1}, ${colorName} region, ${MARK_LABEL[mark]}`}
       onClick={() => onTap(index)}
     >

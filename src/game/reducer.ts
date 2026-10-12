@@ -30,7 +30,7 @@ export function createGameState(mode: Mode, difficulty: Difficulty, puzzle: Puzz
 }
 
 function event(state: GameState, kind: GameEvent['kind'], cell: number): GameEvent {
-  return { kind, cell, autoCrossed: [], seq: (state.lastEvent?.seq ?? 0) + 1 }
+  return { kind, cell, autoCrossed: [], restored: [], seq: (state.lastEvent?.seq ?? 0) + 1 }
 }
 
 function pushPatch(history: Patch[], patch: Patch): Patch[] {
@@ -150,7 +150,7 @@ function undo(state: GameState): GameState {
     ...state,
     marks,
     history: state.history.slice(0, -1),
-    lastEvent: event(state, 'undo', -1),
+    lastEvent: { ...event(state, 'undo', -1), restored: patch.cells },
   }
 }
 
