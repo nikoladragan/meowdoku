@@ -3,6 +3,7 @@ import styles from './App.module.css'
 import { ArtGallery } from './components/ArtGallery/ArtGallery'
 import { Game } from './components/Game/Game'
 import { Home } from './components/Home/Home'
+import { HowToPlay } from './components/HowToPlay/HowToPlay'
 import { Loading } from './components/Loading/Loading'
 import { Settings } from './components/Settings/Settings'
 import { debugArt } from './game/debug'
@@ -20,10 +21,17 @@ export default function App() {
   const launch = useRef(0)
   const [settings, setSettings] = useState<SettingsData>(loadSettings)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  // Opens by itself on the first visit.
+  const [howToOpen, setHowToOpen] = useState(() => !settings.seenHowTo)
 
   const changeSettings = (next: SettingsData) => {
     setSettings(next)
     saveSettings(next)
+  }
+
+  const closeHowTo = () => {
+    setHowToOpen(false)
+    if (!settings.seenHowTo) changeSettings({ ...settings, seenHowTo: true })
   }
 
   const play = async (difficulty: Difficulty) => {
@@ -64,6 +72,7 @@ export default function App() {
           onPlayDaily={playDaily}
           onContinue={(initial) => setScreen({ name: 'game', initial })}
           onSettings={() => setSettingsOpen(true)}
+          onHowTo={() => setHowToOpen(true)}
         />
       )}
       {screen.name === 'loading' && <Loading />}
@@ -71,14 +80,23 @@ export default function App() {
         <Game
           initial={screen.initial}
           autoCross={settings.autoCross}
-          paused={settingsOpen}
+          paused={settingsOpen || howToOpen}
           onBack={home}
           onSettings={() => setSettingsOpen(true)}
         />
       )}
       {settingsOpen && (
-        <Settings settings={settings} onChange={changeSettings} onClose={() => setSettingsOpen(false)} />
+        <Settings
+          settings={settings}
+          onChange={changeSettings}
+          onHowTo={() => {
+            setSettingsOpen(false)
+            setHowToOpen(true)
+          }}
+          onClose={() => setSettingsOpen(false)}
+        />
       )}
+      {howToOpen && <HowToPlay onClose={closeHowTo} />}
     </div>
   )
 }

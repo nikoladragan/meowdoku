@@ -1,4 +1,4 @@
-import { BackIcon, BulbIcon, CloseIcon, GearIcon, SoundOffIcon, SoundOnIcon, UndoIcon } from './icons'
+import { BackIcon, BulbIcon, CloseIcon, GearIcon, HelpIcon, SoundOffIcon, SoundOnIcon, UndoIcon } from './icons'
 
 export const ICONS = {
   back: BackIcon,
@@ -8,4 +8,5 @@ export const ICONS = {
   'sound on': SoundOnIcon,
   'sound off': SoundOffIcon,
   close: CloseIcon,
+  help: HelpIcon,
 }

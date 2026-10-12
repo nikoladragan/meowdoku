@@ -70,3 +70,11 @@ export const CloseIcon = (p: IconProps) => (
     <path d="M6 6 L18 18 M18 6 L6 18" />
   </Icon>
 )
+
+export const HelpIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9.5 9.5 A2.5 2.5 0 1 1 12.8 11.9 C12.2 12.3 12 12.7 12 13.5" />
+    <path d="M12 17 V17.2" />
+  </Icon>
+)

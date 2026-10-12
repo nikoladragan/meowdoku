@@ -3,7 +3,7 @@ import { formatDay, loadTodaysDaily, todayKey } from '../../game/daily'
 import { formatTime } from '../../game/stats'
 import { loadGame, loadStats } from '../../game/storage'
 import { LABELS, SIZES, type Difficulty, type GameState } from '../../game/types'
-import { GearIcon } from '../icons/icons'
+import { GearIcon, HelpIcon } from '../icons/icons'
 import { TitleCat } from '../TitleCat/TitleCat'
 import styles from './Home.module.css'
 
@@ -14,6 +14,7 @@ interface Props {
   onPlayDaily: () => void
   onContinue: (state: GameState) => void
   onSettings: () => void
+  onHowTo: () => void
 }
 
 function dailyCard(daily: GameState | null) {
@@ -26,12 +27,15 @@ function dailyCard(daily: GameState | null) {
   return 'Continue'
 }
 
-export function Home({ onPlay, onPlayDaily, onContinue, onSettings }: Props) {
+export function Home({ onPlay, onPlayDaily, onContinue, onSettings, onHowTo }: Props) {
   const [saved] = useState(() => loadGame('free'))
   const [daily] = useState(() => loadTodaysDaily())
   const [stats] = useState(loadStats)
   return (
     <main className={styles.home}>
+      <button type="button" className={styles.help} aria-label="How to play" onClick={onHowTo}>
+        <HelpIcon />
+      </button>
       <button type="button" className={styles.gear} aria-label="Settings" onClick={onSettings}>
         <GearIcon />
       </button>

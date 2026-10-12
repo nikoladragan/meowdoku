@@ -5,10 +5,11 @@ import styles from './Settings.module.css'
 interface Props {
   settings: SettingsData
   onChange: (next: SettingsData) => void
+  onHowTo: () => void
   onClose: () => void
 }
 
-export function Settings({ settings, onChange, onClose }: Props) {
+export function Settings({ settings, onChange, onHowTo, onClose }: Props) {
   return (
     <Dialog title="Settings" onClose={onClose}>
       <button
@@ -23,6 +24,9 @@ export function Settings({ settings, onChange, onClose }: Props) {
           <span className={styles.hint}>Cross out cells a new cat rules out</span>
         </span>
         <span className={`${styles.switch} ${settings.autoCross ? styles.on : ''}`} />
+      </button>
+      <button type="button" className={styles.row} onClick={onHowTo}>
+        <span className={styles.label}>How to play</span>
       </button>
     </Dialog>
   )
