@@ -1,0 +1,63 @@
+.gallery {
+  padding: 16px 12px 48px;
+}
+.gallery h1 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+}
+.gallery h2 {
+  margin: 28px 0 8px;
+  font-size: 1.05rem;
+}
+.gallery h3 {
+  margin: 14px 0 6px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-c);
+  border: 1px solid rgba(59, 47, 47, 0.22);
+  box-sizing: border-box;
+}
+.s5 {
+  width: 20%;
+  aspect-ratio: 1;
+}
+.s10 {
+  width: 10%;
+  aspect-ratio: 1;
+}
+.row5 .swatch,
+.row10 .swatch {
+  padding: 2px;
+}
+.hero {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+.crackers {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 12px;
+}
+.icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+}

@@ -27,11 +27,3 @@
 .left {
   border-left: 3px solid var(--ink);
 }
-
-.dot {
-  width: 28%;
-  height: 28%;
-  border-radius: 50%;
-  background: var(--ink);
-  opacity: 0.7;
-}

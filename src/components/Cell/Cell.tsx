@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import type { CellBorders } from '../../game/regionStyle'
+import { PawDot } from '../PawDot/PawDot'
 import styles from './Cell.module.css'
 
 interface Props {
@@ -28,7 +29,7 @@ export const Cell = memo(function Cell({ row, col, colorIndex, colorName, border
       style={{ '--cell-bg': `var(--region-${colorIndex})` } as React.CSSProperties}
       aria-label={`Row ${row + 1}, column ${col + 1}, ${colorName} region`}
     >
-      {debugCat && <span className={styles.dot} />}
+      {debugCat && <PawDot />}
     </button>
   )
 })
