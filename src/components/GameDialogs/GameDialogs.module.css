@@ -1,0 +1,39 @@
+.text {
+  margin: 0 0 8px;
+  color: var(--ink-soft);
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.primary,
+.secondary {
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--radius);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 3px 0 rgba(59, 47, 47, 0.2);
+}
+
+.secondary {
+  background: var(--bg);
+  color: var(--ink);
+}
