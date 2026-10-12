@@ -49,3 +49,10 @@ export interface Stats {
   wins: number
   bestMs: number | null
 }
+
+export const LABELS: Record<Difficulty, string> = {
+  easy: 'Easy',
+  normal: 'Normal',
+  hard: 'Hard',
+  extreme: 'Extreme',
+}
