@@ -1,4 +1,5 @@
 import confetti from 'canvas-confetti'
+import { playSound } from '../../audio/sfx'
 import { useEffect, useState } from 'react'
 import { getHint, type Hint } from '../../game/hints'
 import { hintText } from '../../game/hintText'
@@ -57,6 +58,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
   const openHint = () => {
     setOpened({ hint: getHint(state), event: state.lastEvent, puzzle: state.puzzle })
     hintShown()
+    playSound('hint')
   }
 
   const applyHint = () => {

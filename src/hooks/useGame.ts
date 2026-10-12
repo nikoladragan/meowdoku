@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { playSound } from '../audio/sfx'
+import { vibrateFor } from '../audio/haptics'
 import { createGameState, reducer } from '../game/reducer'
 import { recordWin } from '../game/stats'
 import { clearGame, loadStats, saveGame, saveStats } from '../game/storage'
@@ -12,6 +14,16 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     if (state.mode === 'free' && state.status !== 'playing') clearGame('free')
     else saveGame(state)
   }, [state])
+
+  // Sound and vibration once per event. A loaded game has no event, so nothing plays on load.
+  const played = useRef<GameEvent | null>(null)
+  useEffect(() => {
+    const e = state.lastEvent
+    if (!e || e === played.current) return
+    played.current = e
+    playSound(e.kind)
+    vibrateFor(e.kind)
+  }, [state.lastEvent])
 
   // Record stats once per win event.
   const [winResult, setWinResult] = useState<{ counts: boolean; isBest: boolean } | null>(null)

@@ -1,4 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { setVibrationEnabled } from './audio/haptics'
+import { setMuted, unlockAudio } from './audio/sfx'
 import styles from './App.module.css'
 import { ArtGallery } from './components/ArtGallery/ArtGallery'
 import { Game } from './components/Game/Game'
@@ -28,6 +30,18 @@ export default function App() {
     setSettings(next)
     saveSettings(next)
   }
+
+  useEffect(() => {
+    setMuted(settings.muted)
+    setVibrationEnabled(settings.vibrate)
+  }, [settings.muted, settings.vibrate])
+
+  // Browsers only allow audio after a user gesture.
+  useEffect(() => {
+    const unlock = () => unlockAudio()
+    window.addEventListener('pointerdown', unlock, { once: true })
+    return () => window.removeEventListener('pointerdown', unlock)
+  }, [])
 
   const closeHowTo = () => {
     setHowToOpen(false)
