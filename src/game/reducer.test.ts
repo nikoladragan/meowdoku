@@ -108,3 +108,49 @@ describe('retry', () => {
     expect(s.lastEvent).toBeNull()
   })
 })
+
+describe('auto-cross', () => {
+  const size = n
+  const cat = good(2)
+  const catRow = 2
+  const catCol = puzzle.solution[2]
+  const region = puzzle.regions[cat]
+  const expected = () => {
+    const out: number[] = []
+    for (let i = 0; i < size * size; i++) {
+      if (i === cat) continue
+      const r = (i / size) | 0
+      const c = i % size
+      const touching = Math.abs(r - catRow) <= 1 && Math.abs(c - catCol) <= 1
+      if (r === catRow || c === catCol || puzzle.regions[i] === region || touching) out.push(i)
+    }
+    return out
+  }
+
+  it('crosses exactly the row, column, region and touching cells', () => {
+    s = reducer(s, { type: 'placeCat', cell: cat, autoCross: true })
+    expect(s.lastEvent?.autoCrossed.slice().sort((a, b) => a - b)).toEqual(expected())
+    const crossed = s.marks.flatMap((m, i) => (m === 'cross' ? [i] : []))
+    expect(crossed).toEqual(expected())
+    expect(s.marks[cat]).toBe('cat')
+  })
+
+  it('leaves existing marks alone and does not list them as auto-crossed', () => {
+    const already = expected()[0]
+    s = reducer(s, { type: 'toggleCross', cell: already })
+    s = reducer(s, { type: 'placeCat', cell: cat, autoCross: true })
+    expect(s.marks[already]).toBe('cross')
+    expect(s.lastEvent?.autoCrossed).not.toContain(already)
+  })
+
+  it('does nothing extra when auto-cross is off', () => {
+    s = reducer(s, { type: 'placeCat', cell: cat, autoCross: false })
+    expect(s.marks.filter((m) => m !== 'empty')).toHaveLength(1)
+  })
+
+  it('records the cat and its auto-crosses as one history patch', () => {
+    s = reducer(s, { type: 'placeCat', cell: cat, autoCross: true })
+    expect(s.history).toHaveLength(1)
+    expect(s.history[0].cells).toHaveLength(1 + expected().length)
+  })
+})

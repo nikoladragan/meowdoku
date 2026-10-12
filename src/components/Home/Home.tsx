@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatDay, loadTodaysDaily, todayKey } from '../../game/daily'
 import { loadGame } from '../../game/storage'
 import { LABELS, SIZES, type Difficulty, type GameState } from '../../game/types'
+import { GearIcon } from '../icons/icons'
 import { TitleCat } from '../TitleCat/TitleCat'
 import styles from './Home.module.css'
 
@@ -11,6 +12,7 @@ interface Props {
   onPlay: (difficulty: Difficulty) => void
   onPlayDaily: () => void
   onContinue: (state: GameState) => void
+  onSettings: () => void
 }
 
 function dailyCard(daily: GameState | null) {
@@ -20,11 +22,14 @@ function dailyCard(daily: GameState | null) {
   return 'Continue'
 }
 
-export function Home({ onPlay, onPlayDaily, onContinue }: Props) {
+export function Home({ onPlay, onPlayDaily, onContinue, onSettings }: Props) {
   const [saved] = useState(() => loadGame('free'))
   const [daily] = useState(() => loadTodaysDaily())
   return (
     <main className={styles.home}>
+      <button type="button" className={styles.gear} aria-label="Settings" onClick={onSettings}>
+        <GearIcon />
+      </button>
       <div className={styles.hero}>
         <TitleCat size={130} />
         <h1 className={styles.title}>Meowdoku</h1>

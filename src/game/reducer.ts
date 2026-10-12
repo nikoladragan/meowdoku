@@ -6,7 +6,7 @@ const HISTORY_CAP = 500
 export type Action =
   | { type: 'start'; state: GameState }
   | { type: 'toggleCross'; cell: number }
-  | { type: 'placeCat'; cell: number; fromDoubleTap?: boolean }
+  | { type: 'placeCat'; cell: number; fromDoubleTap?: boolean; autoCross?: boolean }
   | { type: 'retry' }
 
 export function createGameState(mode: Mode, difficulty: Difficulty, puzzle: Puzzle): GameState {
@@ -52,7 +52,23 @@ function toggleCross(state: GameState, cell: number): GameState {
   }
 }
 
-function placeCat(state: GameState, cell: number, fromDoubleTap: boolean): GameState {
+// Every cell a cat at `cell` rules out: its row, column, region and the cells touching it.
+function peerCells(size: number, regions: number[], cell: number): number[] {
+  const row = (cell / size) | 0
+  const col = cell % size
+  const out: number[] = []
+  for (let i = 0; i < size * size; i++) {
+    if (i === cell) continue
+    const r = (i / size) | 0
+    const c = i % size
+    if (r === row || c === col || regions[i] === regions[cell] || (Math.abs(r - row) <= 1 && Math.abs(c - col) <= 1)) {
+      out.push(i)
+    }
+  }
+  return out
+}
+
+function placeCat(state: GameState, cell: number, fromDoubleTap: boolean, autoCross: boolean): GameState {
   if (state.marks[cell] === 'cat') return state
   let { marks, history } = state
 
@@ -69,15 +85,26 @@ function placeCat(state: GameState, cell: number, fromDoubleTap: boolean): GameS
   const col = cell % size
 
   if (solution[row] === col) {
-    const before = marks[cell]
     const nextMarks = setMark(marks, cell, 'cat')
+    const cells = [cell]
+    const before: Mark[] = [marks[cell]]
+    const autoCrossed: number[] = []
+    if (autoCross) {
+      for (const i of peerCells(size, state.puzzle.regions, cell)) {
+        if (nextMarks[i] !== 'empty') continue
+        nextMarks[i] = 'cross'
+        autoCrossed.push(i)
+        cells.push(i)
+        before.push('empty')
+      }
+    }
     const won = nextMarks.filter((m) => m === 'cat').length === size
     return {
       ...state,
       marks: nextMarks,
-      history: pushPatch(history, { cells: [cell], before: [before] }),
+      history: pushPatch(history, { cells, before }),
       status: won ? 'won' : 'playing',
-      lastEvent: event(state, won ? 'win' : 'cat', cell),
+      lastEvent: { ...event(state, won ? 'win' : 'cat', cell), autoCrossed },
     }
   }
 
@@ -106,6 +133,6 @@ export function reducer(state: GameState, action: Action): GameState {
     case 'toggleCross':
       return state.status === 'playing' ? toggleCross(state, action.cell) : state
     case 'placeCat':
-      return state.status === 'playing' ? placeCat(state, action.cell, action.fromDoubleTap ?? false) : state
+      return state.status === 'playing' ? placeCat(state, action.cell, action.fromDoubleTap ?? false, action.autoCross ?? false) : state
   }
 }

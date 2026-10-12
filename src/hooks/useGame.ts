@@ -3,7 +3,7 @@ import { createGameState, reducer } from '../game/reducer'
 import { clearGame, saveGame } from '../game/storage'
 import type { Difficulty, GameState, Mode, Puzzle } from '../game/types'
 
-export function useGame(initial: () => GameState) {
+export function useGame(initial: () => GameState, autoCross: boolean) {
   const [state, dispatch] = useReducer(reducer, undefined, initial)
 
   // Free play is only worth resuming while unfinished; a finished game is cleared.
@@ -19,8 +19,8 @@ export function useGame(initial: () => GameState) {
   )
   const toggleCross = useCallback((cell: number) => dispatch({ type: 'toggleCross', cell }), [])
   const placeCat = useCallback(
-    (cell: number) => dispatch({ type: 'placeCat', cell, fromDoubleTap: true }),
-    [],
+    (cell: number) => dispatch({ type: 'placeCat', cell, fromDoubleTap: true, autoCross }),
+    [autoCross],
   )
   const retry = useCallback(() => dispatch({ type: 'retry' }), [])
 

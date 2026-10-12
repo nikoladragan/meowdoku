@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { generatePuzzle } from './generator'
 import { createGameState, reducer } from './reducer'
-import { clearGame, loadGame, saveGame } from './storage'
+import { clearGame, DEFAULT_SETTINGS, loadGame, loadSettings, saveGame, saveSettings } from './storage'
 
 const store = new Map<string, string>()
 
@@ -72,5 +72,23 @@ describe('saveGame / loadGame', () => {
     })
     expect(() => saveGame(createGameState('free', 'easy', puzzle))).not.toThrow()
     expect(loadGame('free')).toBeNull()
+  })
+})
+
+describe('settings', () => {
+  it('uses defaults when nothing is saved', () => {
+    expect(loadSettings()).toEqual(DEFAULT_SETTINGS)
+  })
+
+  it('round-trips', () => {
+    saveSettings({ ...DEFAULT_SETTINGS, autoCross: false })
+    expect(loadSettings().autoCross).toBe(false)
+  })
+
+  it('falls back per field when the saved value is malformed', () => {
+    store.set('meowdoku:v1:settings', '{"autoCross":"no","muted":true}')
+    expect(loadSettings()).toEqual({ ...DEFAULT_SETTINGS, muted: true })
+    store.set('meowdoku:v1:settings', '[[[')
+    expect(loadSettings()).toEqual(DEFAULT_SETTINGS)
   })
 })
