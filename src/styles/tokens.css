@@ -48,4 +48,20 @@ button {
   font: inherit;
   color: inherit;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Pressed feedback for every button (cells opt out in Cell.module.css). */
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+button:disabled {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button {
+    transition: transform 80ms ease-out;
+  }
 }

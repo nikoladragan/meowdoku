@@ -84,7 +84,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
           </h1>
           <span className={styles.timer}>{formatTime(state.elapsedMs)}</span>
         </div>
-        <Lives lives={state.lives} />
+        <Lives lives={state.lives} size={16} />
         <button type="button" className={styles.back} aria-label="Settings" onClick={onSettings}>
           <GearIcon />
         </button>
@@ -97,12 +97,14 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
             <Board puzzle={state.puzzle} marks={state.marks} hint={hint} onCellTap={onCellTap} />
             <p className={styles.reminder}>Tap to cross out. Double-tap to place a cat.</p>
           </div>
-          <Controls
-            canUndo={state.status === 'playing' && state.history.length > 0}
-            canHint={state.status === 'playing'}
-            onUndo={undo}
-            onHint={openHint}
-          />
+          <div className={styles.side}>
+            <Controls
+              canUndo={state.status === 'playing' && state.history.length > 0}
+              canHint={state.status === 'playing'}
+              onUndo={undo}
+              onHint={openHint}
+            />
+          </div>
           {hint && (
             <HintBar text={hintText(hint, state.puzzle)} onApply={applyHint} onClose={() => setHint(null)} />
           )}

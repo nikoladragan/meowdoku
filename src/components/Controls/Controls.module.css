@@ -25,6 +25,19 @@
 }
 
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   box-shadow: none;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .controls {
+    flex-direction: column;
+    height: auto;
+    padding: 0;
+  }
+
+  .btn {
+    min-width: 120px;
+  }
 }

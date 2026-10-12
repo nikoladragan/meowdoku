@@ -122,3 +122,9 @@
   right: auto;
   left: 8px;
 }
+
+/* The title cat shrinks on short screens so every button stays on screen. */
+.hero svg {
+  height: clamp(72px, 17dvh, 130px);
+  width: auto;
+}

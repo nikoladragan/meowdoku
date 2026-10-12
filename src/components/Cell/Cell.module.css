@@ -28,6 +28,10 @@
   border-left: 3px solid var(--ink);
 }
 
+.cell:not(:disabled):active {
+  transform: none;
+}
+
 /* Hint highlighting: target cells get a ring, related cells a soft tint, others dim. */
 .dim > * {
   opacity: 0.45;
