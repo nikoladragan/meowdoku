@@ -29,3 +29,17 @@
   background: var(--accent);
   color: #fff;
 }
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 32px;
+  font-weight: 700;
+}
+
+.lives {
+  display: flex;
+  gap: 6px;
+}

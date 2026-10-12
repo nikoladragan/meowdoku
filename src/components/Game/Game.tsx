@@ -1,44 +1,63 @@
-import { useState } from 'react'
 import { generatePuzzle } from '../../game/generator'
-import type { Puzzle } from '../../game/types'
+import { createGameState } from '../../game/reducer'
+import { SIZES, type Difficulty, type Puzzle } from '../../game/types'
+import { useDoubleTap } from '../../hooks/useDoubleTap'
+import { useGame } from '../../hooks/useGame'
 import { Board } from '../Board/Board'
+import { FishCracker } from '../FishCracker/FishCracker'
 import styles from './Game.module.css'
 
-const SIZES = [5, 7, 9, 10]
+const BUTTONS: { size: number; difficulty: Difficulty }[] = [
+  { size: 5, difficulty: 'easy' },
+  { size: 7, difficulty: 'normal' },
+  { size: 9, difficulty: 'hard' },
+  { size: 10, difficulty: 'extreme' },
+]
 
 function newPuzzle(size: number): Puzzle {
   const id = `free-${crypto.getRandomValues(new Uint32Array(1))[0]}`
   return generatePuzzle(id, size)
 }
 
-// Temporary screen for step 3: size buttons and a board that does not react to taps.
-export function Game() {
-  const [size, setSize] = useState(7)
-  const [puzzle, setPuzzle] = useState(() => newPuzzle(7))
+function newState(difficulty: Difficulty) {
+  return createGameState('free', difficulty, newPuzzle(SIZES[difficulty]))
+}
 
-  const pick = (n: number) => {
-    setSize(n)
-    setPuzzle(newPuzzle(n))
-  }
+// Temporary screen for step 5: size buttons, lives, plain-text status and a playable board.
+export function Game() {
+  const { state, start, toggleCross, placeCat } = useGame(() => newState('normal'))
+  const onCellTap = useDoubleTap({ onCross: toggleCross, onCat: placeCat })
+
+  const pick = (difficulty: Difficulty) => start('free', difficulty, newPuzzle(SIZES[difficulty]))
 
   return (
     <div className={styles.game}>
       <div className={styles.bar}>
-        {SIZES.map((n) => (
+        {BUTTONS.map(({ size, difficulty }) => (
           <button
-            key={n}
+            key={size}
             type="button"
-            className={`${styles.btn} ${n === size ? styles.active : ''}`}
-            onClick={() => pick(n)}
+            className={`${styles.btn} ${difficulty === state.difficulty ? styles.active : ''}`}
+            onClick={() => pick(difficulty)}
           >
-            {n}
+            {size}
           </button>
         ))}
-        <button type="button" className={styles.btn} onClick={() => pick(size)}>
+        <button type="button" className={styles.btn} onClick={() => pick(state.difficulty)}>
           New
         </button>
       </div>
-      <Board puzzle={puzzle} />
+      <div className={styles.status}>
+        <div className={styles.lives}>
+          {[0, 1, 2].map((i) => (
+            <FishCracker key={i} lost={i >= state.lives} />
+          ))}
+        </div>
+        <span>
+          {state.status === 'won' ? 'Solved!' : state.status === 'lost' ? 'Out of crackers' : ''}
+        </span>
+      </div>
+      <Board puzzle={state.puzzle} marks={state.marks} onCellTap={onCellTap} />
     </div>
   )
 }

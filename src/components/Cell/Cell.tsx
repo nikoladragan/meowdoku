@@ -1,18 +1,39 @@
 import { memo } from 'react'
 import type { CellBorders } from '../../game/regionStyle'
+import type { Mark } from '../../game/types'
+import { Cat } from '../Cat/Cat'
+import type { Fur } from '../Cat/fur'
+import { Cross } from '../Cross/Cross'
 import { PawDot } from '../PawDot/PawDot'
 import styles from './Cell.module.css'
 
 interface Props {
+  index: number
   row: number
   col: number
   colorIndex: number
   colorName: string
   borders: CellBorders
+  mark: Mark
+  fur: Fur
   debugCat: boolean
+  onTap: (cell: number) => void
 }
 
-export const Cell = memo(function Cell({ row, col, colorIndex, colorName, borders, debugCat }: Props) {
+const MARK_LABEL: Record<Mark, string> = { empty: 'empty', cross: 'crossed', cat: 'cat' }
+
+export const Cell = memo(function Cell({
+  index,
+  row,
+  col,
+  colorIndex,
+  colorName,
+  borders,
+  mark,
+  fur,
+  debugCat,
+  onTap,
+}: Props) {
   const cls = [
     styles.cell,
     borders.top && styles.top,
@@ -27,9 +48,10 @@ export const Cell = memo(function Cell({ row, col, colorIndex, colorName, border
       type="button"
       className={cls}
       style={{ '--cell-bg': `var(--region-${colorIndex})` } as React.CSSProperties}
-      aria-label={`Row ${row + 1}, column ${col + 1}, ${colorName} region`}
+      aria-label={`Row ${row + 1}, column ${col + 1}, ${colorName} region, ${MARK_LABEL[mark]}`}
+      onClick={() => onTap(index)}
     >
-      {debugCat && <PawDot />}
+      {mark === 'cat' ? <Cat fur={fur} /> : mark === 'cross' ? <Cross /> : debugCat && <PawDot />}
     </button>
   )
 })
