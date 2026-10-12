@@ -1,0 +1,14 @@
+.board {
+  --board-size: min(100vw - 24px, 100dvh - 240px, 640px);
+  display: grid;
+  width: var(--board-size);
+  height: var(--board-size);
+  margin: 0 auto;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior: none;
+  border-radius: 6px;
+  overflow: hidden;
+}
