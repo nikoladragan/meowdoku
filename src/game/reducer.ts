@@ -7,8 +7,10 @@ export type Action =
   | { type: 'start'; state: GameState }
   | { type: 'toggleCross'; cell: number }
   | { type: 'placeCat'; cell: number; fromDoubleTap?: boolean; autoCross?: boolean }
+  | { type: 'crossCells'; cells: number[] }
   | { type: 'undo' }
   | { type: 'tick'; deltaMs: number }
+  | { type: 'hintShown' }
   | { type: 'retry' }
 
 export function createGameState(mode: Mode, difficulty: Difficulty, puzzle: Puzzle): GameState {
@@ -122,6 +124,20 @@ function placeCat(state: GameState, cell: number, fromDoubleTap: boolean, autoCr
   }
 }
 
+// Crosses every empty cell in the list as one patch (used when a hint is applied).
+function crossCells(state: GameState, cells: number[]): GameState {
+  const targets = cells.filter((c) => state.marks[c] === 'empty')
+  if (!targets.length) return state
+  const marks = state.marks.slice()
+  for (const c of targets) marks[c] = 'cross'
+  return {
+    ...state,
+    marks,
+    history: pushPatch(state.history, { cells: targets, before: targets.map(() => 'empty' as Mark) }),
+    lastEvent: event(state, 'cross', targets[0]),
+  }
+}
+
 // Takes back the newest patch. Never touches lives, hintsUsed or elapsedMs.
 function undo(state: GameState): GameState {
   const patch = state.history[state.history.length - 1]
@@ -148,6 +164,10 @@ export function reducer(state: GameState, action: Action): GameState {
         attempt: state.attempt + 1,
         lastEvent: null,
       }
+    case 'hintShown':
+      return { ...state, hintsUsed: state.hintsUsed + 1 }
+    case 'crossCells':
+      return state.status === 'playing' ? crossCells(state, action.cells) : state
     case 'tick':
       return state.status === 'playing' ? { ...state, elapsedMs: state.elapsedMs + action.deltaMs } : state
     case 'undo':

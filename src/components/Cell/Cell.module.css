@@ -27,3 +27,46 @@
 .left {
   border-left: 3px solid var(--ink);
 }
+
+/* Hint highlighting: target cells get a ring, related cells a soft tint, others dim. */
+.dim > * {
+  opacity: 0.45;
+}
+
+.dim {
+  filter: saturate(0.6) brightness(1.03);
+}
+
+.related {
+  box-shadow: inset 0 0 0 100px rgba(255, 216, 77, 0.35);
+}
+
+.reason {
+  outline: 3px solid var(--ink);
+  outline-offset: -5px;
+  z-index: 1;
+}
+
+.target {
+  z-index: 2;
+  outline: 4px solid var(--hint);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 0 100px rgba(255, 216, 77, 0.3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .target {
+    animation: hint-pulse 900ms ease-in-out infinite alternate;
+  }
+}
+
+@keyframes hint-pulse {
+  from {
+    outline-color: var(--hint);
+    box-shadow: inset 0 0 0 100px rgba(255, 216, 77, 0.15);
+  }
+  to {
+    outline-color: var(--ink);
+    box-shadow: inset 0 0 0 100px rgba(255, 216, 77, 0.55);
+  }
+}

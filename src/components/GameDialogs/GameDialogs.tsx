@@ -9,11 +9,12 @@ interface WinProps {
   timeMs: number
   isBest: boolean
   counts: boolean
+  hintsUsed: number
   onNext: () => void
   onHome: () => void
 }
 
-export function WinDialog({ lives, daily, timeMs, isBest, counts, onNext, onHome }: WinProps) {
+export function WinDialog({ lives, daily, timeMs, isBest, counts, hintsUsed, onNext, onHome }: WinProps) {
   return (
     <Dialog title="Purrfect!">
       <p className={styles.text}>You solved the puzzle.</p>
@@ -23,6 +24,10 @@ export function WinDialog({ lives, daily, timeMs, isBest, counts, onNext, onHome
         {isBest && <span className={styles.badge}>New best time!</span>}
       </div>
       {!counts && <p className={styles.text}>Hints or a retry mean this time does not count as a best.</p>}
+      <div className={styles.stat}>
+        <span>Hints used</span>
+        <span>{hintsUsed}</span>
+      </div>
       <div className={styles.stat}>
         <span>Crackers left</span>
         <Lives lives={lives} />

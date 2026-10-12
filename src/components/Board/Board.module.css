@@ -1,5 +1,5 @@
 .board {
-  --board-size: min(100vw - 24px, 100dvh - 240px, 640px);
+  --board-size: min(100vw - 24px, 100dvh - 270px, 640px);
   display: grid;
   width: var(--board-size);
   height: var(--board-size);

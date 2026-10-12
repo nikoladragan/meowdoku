@@ -17,10 +17,13 @@ interface Props {
   mark: Mark
   fur: Fur
   debugCat: boolean
+  hintState: HintCellState
   onTap: (cell: number) => void
 }
 
 const MARK_LABEL: Record<Mark, string> = { empty: 'empty', cross: 'crossed', cat: 'cat' }
+
+export type HintCellState = 'target' | 'related' | 'reason' | 'dim' | null
 
 export const Cell = memo(function Cell({
   index,
@@ -32,6 +35,7 @@ export const Cell = memo(function Cell({
   mark,
   fur,
   debugCat,
+  hintState,
   onTap,
 }: Props) {
   const cls = [
@@ -40,6 +44,7 @@ export const Cell = memo(function Cell({
     borders.right && styles.right,
     borders.bottom && styles.bottom,
     borders.left && styles.left,
+    hintState && styles[hintState],
   ]
     .filter(Boolean)
     .join(' ')

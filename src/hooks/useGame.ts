@@ -38,8 +38,26 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     [autoCross],
   )
   const undo = useCallback(() => dispatch({ type: 'undo' }), [])
+  const crossCells = useCallback((cells: number[]) => dispatch({ type: 'crossCells', cells }), [])
+  const placeCatDirect = useCallback(
+    (cell: number) => dispatch({ type: 'placeCat', cell, autoCross }),
+    [autoCross],
+  )
+  const hintShown = useCallback(() => dispatch({ type: 'hintShown' }), [])
   const tick = useCallback((deltaMs: number) => dispatch({ type: 'tick', deltaMs }), [])
   const retry = useCallback(() => dispatch({ type: 'retry' }), [])
 
-  return { state, winResult, start, toggleCross, placeCat, undo, tick, retry }
+  return {
+    state,
+    winResult,
+    start,
+    toggleCross,
+    placeCat,
+    placeCatDirect,
+    crossCells,
+    hintShown,
+    undo,
+    tick,
+    retry,
+  }
 }

@@ -2,7 +2,9 @@
   display: flex;
   justify-content: center;
   gap: 12px;
-  padding: 8px 12px 0;
+  align-items: center;
+  height: 140px; /* the hint bar covers exactly this slot, so the board never moves */
+  padding: 0 12px;
 }
 
 .btn {
@@ -10,7 +12,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 140px;
+  min-width: 130px;
   min-height: 52px;
   padding: 0 20px;
   border: 0;
