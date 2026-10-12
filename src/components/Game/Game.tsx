@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatDay } from '../../game/daily'
 import { newFreePuzzle } from '../../game/generateAsync'
 import { LABELS, SIZES, type GameState } from '../../game/types'
 import { useDoubleTap } from '../../hooks/useDoubleTap'
@@ -20,6 +21,7 @@ export function Game({ initial, onBack }: Props) {
   const [loading, setLoading] = useState(false)
   const onCellTap = useDoubleTap({ onCross: toggleCross, onCat: placeCat })
   const size = SIZES[state.difficulty]
+  const daily = state.mode === 'daily'
 
   const nextPuzzle = async () => {
     setLoading(true)
@@ -35,7 +37,7 @@ export function Game({ initial, onBack }: Props) {
           <BackIcon />
         </button>
         <h1 className={styles.title}>
-          {LABELS[state.difficulty]} {size}×{size}
+          {daily ? `Daily, ${formatDay(state.puzzle.id.slice('daily-'.length))}` : `${LABELS[state.difficulty]} ${size}×${size}`}
         </h1>
         <Lives lives={state.lives} />
       </header>
@@ -47,8 +49,8 @@ export function Game({ initial, onBack }: Props) {
           <p className={styles.reminder}>Tap to cross out. Double-tap to place a cat.</p>
         </>
       )}
-      {state.status === 'won' && !loading && <WinDialog lives={state.lives} onNext={nextPuzzle} />}
-      {state.status === 'lost' && <LoseDialog onRetry={retry} />}
+      {state.status === 'won' && !loading && <WinDialog lives={state.lives} daily={daily} onNext={nextPuzzle} onHome={onBack} />}
+      {state.status === 'lost' && <LoseDialog onRetry={retry} onHome={onBack} />}
     </div>
   )
 }
