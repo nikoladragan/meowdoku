@@ -15,7 +15,7 @@ export function Lives({ lives, size = 22 }: { lives: number; size?: number }) {
   return (
     <div className={styles.lives} role="img" aria-label={`${lives} of ${START_LIVES} crackers left`}>
       {Array.from({ length: START_LIVES }, (_, i) => (
-        <span key={i} className={styles.slot}>
+        <span key={i} className={styles.slot} aria-hidden="true">
           <FishCracker lost={i >= lives} size={size} />
           {i === dropped && (
             <span className={styles.ghost}>
