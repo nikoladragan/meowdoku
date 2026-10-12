@@ -1,0 +1,51 @@
+:root {
+  --bg: #fff8ee;
+  --surface: #ffffff;
+  --ink: #3b2f2f;
+  --ink-soft: rgba(59, 47, 47, 0.55);
+  --accent: #f28b66;
+  --danger: #e2574c;
+  --hint: #ffd84d;
+  --radius: 16px;
+  --font: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+
+  --region-0: #f9b4ab; /* coral */
+  --region-1: #fbd38d; /* apricot */
+  --region-2: #fff1a8; /* butter */
+  --region-3: #c5e8a3; /* sage */
+  --region-4: #9fe0c4; /* mint */
+  --region-5: #a5dcf2; /* sky */
+  --region-6: #b3c0f7; /* periwinkle */
+  --region-7: #d7b8f3; /* lilac */
+  --region-8: #f5b8de; /* pink */
+  --region-9: #d9cbb8; /* sand */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  overscroll-behavior: none;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  touch-action: manipulation;
+}
