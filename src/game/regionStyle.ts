@@ -16,11 +16,11 @@ export const REGION_NAMES = [
 
 // Colour offset derived from the puzzle id, so the same board does not always look the same.
 export function colorOffset(puzzle: Puzzle): number {
-  return hashString(`color:${puzzle.id}`) % 10
+  return hashString(`color:${puzzle.id}`) % REGION_NAMES.length
 }
 
 export function regionColorIndex(region: number, offset: number): number {
-  return (region + offset) % 10
+  return (region + offset) % REGION_NAMES.length
 }
 
 export interface CellBorders {

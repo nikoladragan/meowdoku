@@ -86,9 +86,11 @@ const note = (at: number, freq: number, dur = 0.14, gain = 0.14): Tone => ({
   type: 'triangle',
 })
 
+const TICK: Tone[] = [{ at: 0, dur: 0.04, freq: 700, gain: 0.1, type: 'triangle' }]
+
 const SOUNDS: Record<Sound, Tone[]> = {
-  cross: [{ at: 0, dur: 0.04, freq: 700, gain: 0.1, type: 'triangle' }],
-  uncross: [{ at: 0, dur: 0.04, freq: 700, gain: 0.1, type: 'triangle' }],
+  cross: TICK,
+  uncross: TICK,
   undo: [{ at: 0, dur: 0.05, freq: 420, gain: 0.1, type: 'triangle' }],
   // "mew": the pitch glides up then down, low-pass filtered
   cat: [

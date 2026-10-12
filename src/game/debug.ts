@@ -1,8 +1,8 @@
 // Dev-only switches, active only when import.meta.env.DEV is true.
 const params = new URLSearchParams(import.meta.env.DEV && typeof window !== 'undefined' ? window.location.search : '')
 
-export const debugCats = params.has('debug')
-export const debugArt = params.has('art')
+export const debugCats = import.meta.env.DEV && params.has('debug')
+export const debugArt = import.meta.env.DEV && params.has('art')
 
 // ?date=YYYY-MM-DD makes the app treat that date as today.
 const date = params.get('date')

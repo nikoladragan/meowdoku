@@ -1,5 +1,6 @@
 export type Difficulty = 'easy' | 'normal' | 'hard' | 'extreme'
 export const SIZES: Record<Difficulty, number> = { easy: 5, normal: 7, hard: 9, extreme: 10 }
+export const DIFFICULTIES = Object.keys(SIZES) as Difficulty[]
 
 export interface Puzzle {
   id: string // 'free-<uint32>' or 'daily-YYYY-MM-DD'

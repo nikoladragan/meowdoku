@@ -3,7 +3,7 @@ import { playSound } from '../../audio/sfx'
 import { useEffect, useState } from 'react'
 import { getHint, type Hint } from '../../game/hints'
 import { hintText } from '../../game/hintText'
-import { formatDay } from '../../game/daily'
+import { dailyKey, formatDay } from '../../game/daily'
 import { newFreePuzzle } from '../../game/generateAsync'
 import { LABELS, SIZES, type GameEvent, type GameState, type Puzzle } from '../../game/types'
 import { useDoubleTap } from '../../hooks/useDoubleTap'
@@ -53,7 +53,6 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
   const [opened, setOpened] = useState<{ hint: Hint; event: GameEvent | null; puzzle: Puzzle } | null>(null)
   const hint =
     opened && opened.event === state.lastEvent && opened.puzzle === state.puzzle ? opened.hint : null
-  const setHint = (h: null) => setOpened(h)
 
   const openHint = () => {
     setOpened({ hint: getHint(state), event: state.lastEvent, puzzle: state.puzzle })
@@ -96,7 +95,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
         </button>
         <div className={styles.titles}>
           <h1 className={styles.title}>
-            {daily ? `Daily, ${formatDay(state.puzzle.id.slice('daily-'.length))}` : `${LABELS[state.difficulty]} ${size}×${size}`}
+            {daily ? `Daily, ${formatDay(dailyKey(state.puzzle.id))}` : `${LABELS[state.difficulty]} ${size}×${size}`}
           </h1>
           <span className={styles.timer}>{formatTime(state.elapsedMs)}</span>
         </div>
@@ -129,7 +128,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
             />
           </div>
           {hint && (
-            <HintBar text={hintText(hint, state.puzzle)} onApply={applyHint} onClose={() => setHint(null)} />
+            <HintBar text={hintText(hint, state.puzzle)} onApply={applyHint} onClose={() => setOpened(null)} />
           )}
         </>
       )}

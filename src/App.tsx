@@ -9,12 +9,11 @@ import { HowToPlay } from './components/HowToPlay/HowToPlay'
 import { Loading } from './components/Loading/Loading'
 import { Settings } from './components/Settings/Settings'
 import { debugArt } from './game/debug'
-import { newFreePuzzle } from './game/generateAsync'
 import { DAILY_SIZE, dailyId, todayKey } from './game/daily'
-import { generateAsync } from './game/generateAsync'
+import { generateAsync, newFreePuzzle } from './game/generateAsync'
 import { createGameState } from './game/reducer'
 import { loadSettings, saveSettings } from './game/storage'
-import type { Difficulty, GameState, Settings as SettingsData } from './game/types'
+import type { Difficulty, GameState, Mode, Puzzle, Settings as SettingsData } from './game/types'
 
 type Screen = { name: 'home' } | { name: 'loading' } | { name: 'game'; initial: GameState }
 
@@ -38,9 +37,8 @@ export default function App() {
 
   // Browsers only allow audio after a user gesture.
   useEffect(() => {
-    const unlock = () => unlockAudio()
-    window.addEventListener('pointerdown', unlock, { once: true })
-    return () => window.removeEventListener('pointerdown', unlock)
+    window.addEventListener('pointerdown', unlockAudio, { once: true })
+    return () => window.removeEventListener('pointerdown', unlockAudio)
   }, [])
 
   const closeHowTo = () => {
@@ -48,22 +46,16 @@ export default function App() {
     if (!settings.seenHowTo) changeSettings({ ...settings, seenHowTo: true })
   }
 
-  const play = async (difficulty: Difficulty) => {
+  const launchGame = async (mode: Mode, difficulty: Difficulty, generate: () => Promise<Puzzle>) => {
     const mine = ++launch.current
     setScreen({ name: 'loading' })
-    const puzzle = await newFreePuzzle(difficulty)
+    const puzzle = await generate()
     if (launch.current !== mine) return
-    setScreen({ name: 'game', initial: createGameState('free', difficulty, puzzle) })
+    setScreen({ name: 'game', initial: createGameState(mode, difficulty, puzzle) })
   }
 
-  const playDaily = async () => {
-    const mine = ++launch.current
-    setScreen({ name: 'loading' })
-    const id = dailyId(todayKey())
-    const puzzle = await generateAsync(id, DAILY_SIZE)
-    if (launch.current !== mine) return
-    setScreen({ name: 'game', initial: createGameState('daily', 'hard', puzzle) })
-  }
+  const play = (difficulty: Difficulty) => launchGame('free', difficulty, () => newFreePuzzle(difficulty))
+  const playDaily = () => launchGame('daily', 'hard', () => generateAsync(dailyId(todayKey()), DAILY_SIZE))
 
   const home = () => {
     launch.current++

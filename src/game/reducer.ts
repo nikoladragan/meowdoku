@@ -1,3 +1,4 @@
+import { peerCells } from './logic'
 import type { Difficulty, GameEvent, GameState, Mark, Mode, Patch, Puzzle } from './types'
 
 export const START_LIVES = 3
@@ -54,22 +55,6 @@ function toggleCross(state: GameState, cell: number): GameState {
     history: pushPatch(state.history, { cells: [cell], before: [before] }),
     lastEvent: event(state, after === 'cross' ? 'cross' : 'uncross', cell),
   }
-}
-
-// Every cell a cat at `cell` rules out: its row, column, region and the cells touching it.
-function peerCells(size: number, regions: number[], cell: number): number[] {
-  const row = (cell / size) | 0
-  const col = cell % size
-  const out: number[] = []
-  for (let i = 0; i < size * size; i++) {
-    if (i === cell) continue
-    const r = (i / size) | 0
-    const c = i % size
-    if (r === row || c === col || regions[i] === regions[cell] || (Math.abs(r - row) <= 1 && Math.abs(c - col) <= 1)) {
-      out.push(i)
-    }
-  }
-  return out
 }
 
 function placeCat(state: GameState, cell: number, fromDoubleTap: boolean, autoCross: boolean): GameState {
@@ -162,7 +147,6 @@ export function reducer(state: GameState, action: Action): GameState {
       return {
         ...createGameState(state.mode, state.difficulty, state.puzzle),
         attempt: state.attempt + 1,
-        lastEvent: null,
       }
     case 'hintShown':
       return { ...state, hintsUsed: state.hintsUsed + 1 }

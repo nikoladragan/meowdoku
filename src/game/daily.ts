@@ -18,7 +18,9 @@ export function todayKey(): string {
   return debugDate ?? dateKey(new Date())
 }
 
-export const dailyId = (key: string) => `daily-${key}`
+const ID_PREFIX = 'daily-'
+export const dailyId = (key: string) => `${ID_PREFIX}${key}`
+export const dailyKey = (id: string) => id.slice(ID_PREFIX.length)
 
 export function dailyPuzzle(key: string): Puzzle {
   return generatePuzzle(dailyId(key), DAILY_SIZE)

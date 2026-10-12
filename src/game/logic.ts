@@ -25,34 +25,38 @@ export interface Step {
 
 type RawStep = Omit<Step, 'level'>
 
+// The row, column and region unit of a cell.
+export function unitsOf(n: number, regions: number[], cell: number): number[] {
+  return [(cell / n) | 0, n + (cell % n), 2 * n + regions[cell]]
+}
+
+// Every cell a cat at `cell` rules out: its row, column, region and the cells touching it.
+export function peerCells(n: number, regions: number[], cell: number): number[] {
+  const row = (cell / n) | 0
+  const col = cell % n
+  const out: number[] = []
+  for (let i = 0; i < n * n; i++) {
+    if (i === cell) continue
+    const r = (i / n) | 0
+    const c = i % n
+    if (r === row || c === col || regions[i] === regions[cell] || (Math.abs(r - row) <= 1 && Math.abs(c - col) <= 1)) {
+      out.push(i)
+    }
+  }
+  return out
+}
+
 export function createBoard(n: number, regions: number[]): LogicBoard {
   const N = n * n
   const unitCells: number[][] = Array.from({ length: 3 * n }, () => [])
   for (let i = 0; i < N; i++) {
-    unitCells[(i / n) | 0].push(i)
-    unitCells[n + (i % n)].push(i)
-    unitCells[2 * n + regions[i]].push(i)
-  }
-  const peers: Set<number>[] = []
-  for (let i = 0; i < N; i++) {
-    const r = (i / n) | 0
-    const c = i % n
-    const s = new Set([...unitCells[r], ...unitCells[n + c], ...unitCells[2 * n + regions[i]]])
-    for (let dr = -1; dr <= 1; dr++) {
-      for (let dc = -1; dc <= 1; dc++) {
-        const rr = r + dr
-        const cc = c + dc
-        if (rr >= 0 && cc >= 0 && rr < n && cc < n) s.add(rr * n + cc)
-      }
-    }
-    s.delete(i)
-    peers.push(s)
+    for (const u of unitsOf(n, regions, i)) unitCells[u].push(i)
   }
   return {
     n,
     regions,
     unitCells,
-    peers,
+    peers: Array.from({ length: N }, (_, i) => new Set(peerCells(n, regions, i))),
     cand: new Array<boolean>(N).fill(true),
     cat: new Array<boolean>(N).fill(false),
     unitDone: new Array<boolean>(3 * n).fill(false),
@@ -65,9 +69,7 @@ export function boardPlaceCat(board: LogicBoard, i: number): void {
   board.cat[i] = true
   board.cand[i] = false
   board.cats++
-  board.unitDone[(i / n) | 0] = true
-  board.unitDone[n + (i % n)] = true
-  board.unitDone[2 * n + regions[i]] = true
+  for (const u of unitsOf(n, regions, i)) board.unitDone[u] = true
   for (const j of board.peers[i]) board.cand[j] = false
 }
 
@@ -146,7 +148,7 @@ function findBlocks(board: LogicBoard): RawStep | null {
   const { n, regions, unitCells, cand, unitDone, peers } = board
   for (let i = 0; i < n * n; i++) {
     if (!cand[i]) continue
-    const own = [(i / n) | 0, n + (i % n), 2 * n + regions[i]]
+    const own = unitsOf(n, regions, i)
     for (let u = 0; u < 3 * n; u++) {
       if (unitDone[u] || own.includes(u)) continue
       let any = false

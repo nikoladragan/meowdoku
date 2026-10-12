@@ -1,20 +1,5 @@
-import type { Fur } from './fur'
+import { INK, PALETTES, type Fur } from './fur'
 
-interface Palette {
-  fur: string
-  muzzle: string
-  eye: string
-  pupil: string
-}
-
-const PALETTES: Record<Fur, Palette> = {
-  orange: { fur: '#f2a65a', muzzle: '#fbe3c4', eye: '#ffffff', pupil: '#3b2f2f' },
-  grey: { fur: '#9aa0a8', muzzle: '#dfe2e6', eye: '#ffffff', pupil: '#3b2f2f' },
-  black: { fur: '#3b3b45', muzzle: '#6b6b78', eye: '#ffe27a', pupil: '#1d1d24' },
-  cream: { fur: '#f6e7cb', muzzle: '#fffaf0', eye: '#ffffff', pupil: '#3b2f2f' },
-}
-
-const INK = '#3b2f2f'
 const INNER_EAR = '#f5a9b8'
 
 // The cat drawn in a 100x100 box, as a group so other illustrations can reuse it.
@@ -49,9 +34,9 @@ export function CatShape({ fur }: { fur: Fur }) {
   )
 }
 
-export function Cat({ fur, className }: { fur: Fur; className?: string }) {
+export function Cat({ fur }: { fur: Fur }) {
   return (
-    <svg viewBox="0 0 100 100" className={className} width="100%" height="100%" aria-hidden="true">
+    <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">
       <CatShape fur={fur} />
     </svg>
   )

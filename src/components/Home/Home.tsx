@@ -2,12 +2,10 @@ import { useState } from 'react'
 import { formatDay, loadTodaysDaily, todayKey } from '../../game/daily'
 import { formatTime } from '../../game/stats'
 import { loadGame, loadStats } from '../../game/storage'
-import { LABELS, SIZES, type Difficulty, type GameState } from '../../game/types'
+import { DIFFICULTIES, LABELS, SIZES, type Difficulty, type GameState } from '../../game/types'
 import { GearIcon, HelpIcon } from '../icons/icons'
 import { TitleCat } from '../TitleCat/TitleCat'
 import styles from './Home.module.css'
-
-const DIFFICULTIES: Difficulty[] = ['easy', 'normal', 'hard', 'extreme']
 
 interface Props {
   onPlay: (difficulty: Difficulty) => void

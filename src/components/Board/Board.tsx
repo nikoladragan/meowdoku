@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 import { debugCats } from '../../game/debug'
-import { colorOffset, computeBorders, regionColorIndex, REGION_NAMES } from '../../game/regionStyle'
+import { colorOffset, computeBorders, regionColorIndex } from '../../game/regionStyle'
 import type { Hint } from '../../game/hints'
+import { unitsOf } from '../../game/logic'
 import type { GameEvent, Mark, Puzzle, Status } from '../../game/types'
 import { FURS } from '../Cat/fur'
 import { Cell, type CellAnim, type HintCellState } from '../Cell/Cell'
@@ -61,14 +62,13 @@ export function Board({ puzzle, marks, hint, lastEvent, status, onCellTap }: Pro
 
   const hintStates = useMemo(() => {
     if (!hint) return null
-    const unitOf = (i: number) => [(i / size) | 0, size + (i % size), 2 * size + regions[i]]
     const target = new Set(hint.cells)
     const reason = new Set(hint.reasonCells)
     const units = new Set([...hint.units, ...hint.into])
     return regions.map((_, i): HintCellState => {
       if (target.has(i)) return 'target'
       if (reason.has(i)) return 'reason'
-      if (unitOf(i).some((u) => units.has(u))) return 'related'
+      if (unitsOf(size, regions, i).some((u) => units.has(u))) return 'related'
       return 'dim'
     })
   }, [hint, size, regions])
@@ -81,22 +81,21 @@ export function Board({ puzzle, marks, hint, lastEvent, status, onCellTap }: Pro
       {regions.map((g, i) => {
         const row = (i / size) | 0
         const col = i % size
-        const colorIndex = regionColorIndex(g, offset)
+        const anim = anims.get(i)
         return (
           <Cell
             key={i}
             index={i}
             row={row}
             col={col}
-            colorIndex={colorIndex}
-            colorName={REGION_NAMES[colorIndex]}
+            colorIndex={regionColorIndex(g, offset)}
             borders={borders[i]}
             mark={marks[i]}
             fur={FURS[(row + offset) % FURS.length]}
             debugCat={debugCats && solution[row] === col}
-            hintState={hintStates ? hintStates[i] : null}
-            anim={anims.get(i)?.type ?? null}
-            animDelay={anims.get(i)?.delay ?? 0}
+            hintState={hintStates?.[i] ?? null}
+            anim={anim?.type ?? null}
+            animDelay={anim?.delay ?? 0}
             onTap={onCellTap}
           />
         )

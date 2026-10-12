@@ -1,8 +1,30 @@
+import { START_LIVES } from './reducer'
 import { EMPTY_STATS, type AllStats, type StatsKey } from './stats'
-import type { GameState, Mark, Mode, Patch, Puzzle, Settings } from './types'
+import { DIFFICULTIES } from './types'
+import type { Difficulty, GameState, Mark, Mode, Patch, Puzzle, Settings, Status } from './types'
 
 const PREFIX = 'meowdoku:v1:'
 const gameKey = (mode: Mode) => `${PREFIX}game:${mode}`
+const SETTINGS_KEY = `${PREFIX}settings`
+const STATS_KEY = `${PREFIX}stats`
+
+// The parsed value under `key`, or null if it is missing, malformed or storage is unavailable.
+function read(key: string): unknown {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function write(key: string, value: unknown): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    // storage full or unavailable: the value just isn't saved
+  }
+}
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 const isInt = (v: unknown, min: number, max: number): v is number =>
@@ -10,6 +32,7 @@ const isInt = (v: unknown, min: number, max: number): v is number =>
 const isIntArray = (v: unknown, len: number, max: number): v is number[] =>
   Array.isArray(v) && v.length === len && v.every((x) => isInt(x, 0, max))
 const MARKS: Mark[] = ['empty', 'cross', 'cat']
+const STATUSES: Status[] = ['playing', 'won', 'lost']
 
 function isPuzzle(v: unknown): v is Puzzle {
   if (!isObj(v) || typeof v.id !== 'string' || !isInt(v.size, 5, 10) || !isInt(v.level, 1, 5)) return false
@@ -33,12 +56,12 @@ export function isGameState(v: unknown): v is GameState {
   const cells = v.puzzle.size * v.puzzle.size
   return (
     (v.mode === 'free' || v.mode === 'daily') &&
-    ['easy', 'normal', 'hard', 'extreme'].includes(v.difficulty as string) &&
+    DIFFICULTIES.includes(v.difficulty as Difficulty) &&
     Array.isArray(v.marks) &&
     v.marks.length === cells &&
     v.marks.every((m) => MARKS.includes(m as Mark)) &&
-    isInt(v.lives, 0, 3) &&
-    ['playing', 'won', 'lost'].includes(v.status as string) &&
+    isInt(v.lives, 0, START_LIVES) &&
+    STATUSES.includes(v.status as Status) &&
     Array.isArray(v.history) &&
     v.history.every((p) => isPatch(p, cells)) &&
     typeof v.elapsedMs === 'number' &&
@@ -50,23 +73,13 @@ export function isGameState(v: unknown): v is GameState {
 
 // lastEvent is never stored, otherwise sounds and animations would replay on load.
 export function saveGame(state: GameState): void {
-  try {
-    localStorage.setItem(gameKey(state.mode), JSON.stringify({ ...state, lastEvent: null }))
-  } catch {
-    // storage full or unavailable: the game just isn't saved
-  }
+  write(gameKey(state.mode), { ...state, lastEvent: null })
 }
 
 export function loadGame(mode: Mode): GameState | null {
-  try {
-    const raw = localStorage.getItem(gameKey(mode))
-    if (!raw) return null
-    const parsed: unknown = JSON.parse(raw)
-    if (!isGameState(parsed) || parsed.mode !== mode) return null
-    return { ...parsed, lastEvent: null }
-  } catch {
-    return null
-  }
+  const parsed = read(gameKey(mode))
+  if (!isGameState(parsed) || parsed.mode !== mode) return null
+  return { ...parsed, lastEvent: null }
 }
 
 export function clearGame(mode: Mode): void {
@@ -81,50 +94,32 @@ export const DEFAULT_SETTINGS: Settings = { muted: false, vibrate: true, autoCro
 
 // Unknown or malformed fields fall back to their defaults.
 export function loadSettings(): Settings {
-  try {
-    const raw = localStorage.getItem(`${PREFIX}settings`)
-    const parsed: unknown = raw ? JSON.parse(raw) : null
-    if (!isObj(parsed)) return { ...DEFAULT_SETTINGS }
-    const out = { ...DEFAULT_SETTINGS }
-    for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
-      if (typeof parsed[key] === 'boolean') out[key] = parsed[key]
-    }
-    return out
-  } catch {
-    return { ...DEFAULT_SETTINGS }
+  const out = { ...DEFAULT_SETTINGS }
+  const parsed = read(SETTINGS_KEY)
+  if (!isObj(parsed)) return out
+  for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
+    if (typeof parsed[key] === 'boolean') out[key] = parsed[key]
   }
+  return out
 }
 
 export function saveSettings(settings: Settings): void {
-  try {
-    localStorage.setItem(`${PREFIX}settings`, JSON.stringify(settings))
-  } catch {
-    // ignore
-  }
+  write(SETTINGS_KEY, settings)
 }
 
 export function loadStats(): AllStats {
   const out: AllStats = JSON.parse(JSON.stringify(EMPTY_STATS))
-  try {
-    const raw = localStorage.getItem(`${PREFIX}stats`)
-    const parsed: unknown = raw ? JSON.parse(raw) : null
-    if (!isObj(parsed)) return out
-    for (const key of Object.keys(out) as StatsKey[]) {
-      const v = parsed[key]
-      if (isObj(v) && isInt(v.wins, 0, 1e9) && (v.bestMs === null || (typeof v.bestMs === 'number' && v.bestMs >= 0))) {
-        out[key] = { wins: v.wins, bestMs: v.bestMs }
-      }
+  const parsed = read(STATS_KEY)
+  if (!isObj(parsed)) return out
+  for (const key of Object.keys(out) as StatsKey[]) {
+    const v = parsed[key]
+    if (isObj(v) && isInt(v.wins, 0, 1e9) && (v.bestMs === null || (typeof v.bestMs === 'number' && v.bestMs >= 0))) {
+      out[key] = { wins: v.wins, bestMs: v.bestMs }
     }
-  } catch {
-    // keep defaults
   }
   return out
 }
 
 export function saveStats(stats: AllStats): void {
-  try {
-    localStorage.setItem(`${PREFIX}stats`, JSON.stringify(stats))
-  } catch {
-    // ignore
-  }
+  write(STATS_KEY, stats)
 }
