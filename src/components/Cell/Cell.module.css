@@ -1,3 +1,5 @@
+/* Every line is the same width. Each cell draws only its right and bottom line and the board
+   draws the top and left edge, so no line is drawn twice. Black marks where regions meet. */
 .cell {
   position: relative;
   display: flex;
@@ -5,7 +7,9 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  border: 1px solid rgba(59, 47, 47, 0.22);
+  border: 0;
+  border-right: var(--line) solid var(--line-soft);
+  border-bottom: var(--line) solid var(--line-soft);
   border-radius: 0;
   background: var(--cell-bg);
   touch-action: manipulation;
@@ -15,17 +19,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.top {
-  border-top: 3px solid var(--ink);
-}
 .right {
-  border-right: 3px solid var(--ink);
+  border-right-color: var(--line-edge);
 }
+
 .bottom {
-  border-bottom: 3px solid var(--ink);
-}
-.left {
-  border-left: 3px solid var(--ink);
+  border-bottom-color: var(--line-edge);
 }
 
 .cell:not(:disabled):active {

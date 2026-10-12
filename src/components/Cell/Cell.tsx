@@ -46,10 +46,8 @@ export const Cell = memo(function Cell({
 }: Props) {
   const cls = [
     styles.cell,
-    borders.top && styles.top,
     borders.right && styles.right,
     borders.bottom && styles.bottom,
-    borders.left && styles.left,
     hintState && styles[hintState],
     anim && styles[anim],
   ]

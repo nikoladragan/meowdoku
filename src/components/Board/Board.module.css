@@ -9,6 +9,8 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   overscroll-behavior: none;
+  border-top: var(--line) solid var(--line-edge);
+  border-left: var(--line) solid var(--line-edge);
   border-radius: 6px;
   overflow: hidden;
 }

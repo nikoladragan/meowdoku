@@ -7,6 +7,11 @@
   --danger: #e2574c;
   --hint: #ffd84d;
   --radius: 16px;
+
+  /* Board lines: one width everywhere, black only on region edges. */
+  --line: 2px;
+  --line-edge: #000;
+  --line-soft: rgba(0, 0, 0, 0.16);
   --font: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
 
   --region-0: #f9b4ab; /* coral */
