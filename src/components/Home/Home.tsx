@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatDay, loadTodaysDaily, todayKey } from '../../game/daily'
-import { loadGame } from '../../game/storage'
+import { formatTime } from '../../game/stats'
+import { loadGame, loadStats } from '../../game/storage'
 import { LABELS, SIZES, type Difficulty, type GameState } from '../../game/types'
 import { GearIcon } from '../icons/icons'
 import { TitleCat } from '../TitleCat/TitleCat'
@@ -17,7 +18,10 @@ interface Props {
 
 function dailyCard(daily: GameState | null) {
   if (!daily) return 'Play'
-  if (daily.status === 'won') return `Solved, ${daily.lives} ${daily.lives === 1 ? 'cracker' : 'crackers'} left`
+  if (daily.status === 'won') {
+    const crackers = `${daily.lives} ${daily.lives === 1 ? 'cracker' : 'crackers'} left`
+    return `Solved in ${formatTime(daily.elapsedMs)}, ${crackers}`
+  }
   if (daily.status === 'lost') return 'Try again'
   return 'Continue'
 }
@@ -25,6 +29,7 @@ function dailyCard(daily: GameState | null) {
 export function Home({ onPlay, onPlayDaily, onContinue, onSettings }: Props) {
   const [saved] = useState(() => loadGame('free'))
   const [daily] = useState(() => loadTodaysDaily())
+  const [stats] = useState(loadStats)
   return (
     <main className={styles.home}>
       <button type="button" className={styles.gear} aria-label="Settings" onClick={onSettings}>
@@ -53,7 +58,12 @@ export function Home({ onPlay, onPlayDaily, onContinue, onSettings }: Props) {
         )}
         {DIFFICULTIES.map((difficulty) => (
           <button key={difficulty} type="button" className={styles.diff} onClick={() => onPlay(difficulty)}>
-            <span>{LABELS[difficulty]}</span>
+            <span className={styles.diffLabel}>
+              {LABELS[difficulty]}
+              {stats[difficulty].bestMs !== null && (
+                <span className={styles.best}>Best {formatTime(stats[difficulty].bestMs)}</span>
+              )}
+            </span>
             <span className={styles.size}>
               {SIZES[difficulty]}×{SIZES[difficulty]}
             </span>

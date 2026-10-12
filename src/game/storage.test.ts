@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { generatePuzzle } from './generator'
+import { EMPTY_STATS } from './stats'
 import { createGameState, reducer } from './reducer'
-import { clearGame, DEFAULT_SETTINGS, loadGame, loadSettings, saveGame, saveSettings } from './storage'
+import { clearGame, DEFAULT_SETTINGS, loadGame, loadSettings, loadStats, saveGame, saveSettings, saveStats } from './storage'
 
 const store = new Map<string, string>()
 
@@ -90,5 +91,17 @@ describe('settings', () => {
     expect(loadSettings()).toEqual({ ...DEFAULT_SETTINGS, muted: true })
     store.set('meowdoku:v1:settings', '[[[')
     expect(loadSettings()).toEqual(DEFAULT_SETTINGS)
+  })
+})
+
+describe('stats', () => {
+  it('defaults, round-trips and ignores malformed entries', () => {
+    expect(loadStats()).toEqual(EMPTY_STATS)
+    saveStats({ ...EMPTY_STATS, easy: { wins: 3, bestMs: 41_000 } })
+    expect(loadStats().easy).toEqual({ wins: 3, bestMs: 41_000 })
+    store.set('meowdoku:v1:stats', '{"easy":{"wins":"x","bestMs":5},"hard":{"wins":2,"bestMs":null}}')
+    const s = loadStats()
+    expect(s.easy).toEqual({ wins: 0, bestMs: null })
+    expect(s.hard).toEqual({ wins: 2, bestMs: null })
   })
 })

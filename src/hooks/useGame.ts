@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { createGameState, reducer } from '../game/reducer'
-import { clearGame, saveGame } from '../game/storage'
-import type { Difficulty, GameState, Mode, Puzzle } from '../game/types'
+import { recordWin } from '../game/stats'
+import { clearGame, loadStats, saveGame, saveStats } from '../game/storage'
+import type { Difficulty, GameEvent, GameState, Mode, Puzzle } from '../game/types'
 
 export function useGame(initial: () => GameState, autoCross: boolean) {
   const [state, dispatch] = useReducer(reducer, undefined, initial)
@@ -12,9 +13,23 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     else saveGame(state)
   }, [state])
 
+  // Record stats once per win event.
+  const [winResult, setWinResult] = useState<{ counts: boolean; isBest: boolean } | null>(null)
+  const handled = useRef<GameEvent | null>(null)
+  useEffect(() => {
+    const e = state.lastEvent
+    if (e?.kind !== 'win' || e === handled.current) return
+    handled.current = e
+    const r = recordWin(loadStats(), state)
+    saveStats(r.stats)
+    setWinResult({ counts: r.counts, isBest: r.isBest })
+  }, [state])
+
   const start = useCallback(
-    (mode: Mode, difficulty: Difficulty, puzzle: Puzzle) =>
-      dispatch({ type: 'start', state: createGameState(mode, difficulty, puzzle) }),
+    (mode: Mode, difficulty: Difficulty, puzzle: Puzzle) => {
+      setWinResult(null)
+      dispatch({ type: 'start', state: createGameState(mode, difficulty, puzzle) })
+    },
     [],
   )
   const toggleCross = useCallback((cell: number) => dispatch({ type: 'toggleCross', cell }), [])
@@ -23,7 +38,8 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     [autoCross],
   )
   const undo = useCallback(() => dispatch({ type: 'undo' }), [])
+  const tick = useCallback((deltaMs: number) => dispatch({ type: 'tick', deltaMs }), [])
   const retry = useCallback(() => dispatch({ type: 'retry' }), [])
 
-  return { state, start, toggleCross, placeCat, undo, retry }
+  return { state, winResult, start, toggleCross, placeCat, undo, tick, retry }
 }

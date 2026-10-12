@@ -4,6 +4,8 @@ import { newFreePuzzle } from '../../game/generateAsync'
 import { LABELS, SIZES, type GameState } from '../../game/types'
 import { useDoubleTap } from '../../hooks/useDoubleTap'
 import { useGame } from '../../hooks/useGame'
+import { useGameTimer } from '../../hooks/useGameTimer'
+import { formatTime } from '../../game/stats'
 import { Board } from '../Board/Board'
 import { Controls } from '../Controls/Controls'
 import { LoseDialog, WinDialog } from '../GameDialogs/GameDialogs'
@@ -15,15 +17,18 @@ import styles from './Game.module.css'
 interface Props {
   initial: GameState
   autoCross: boolean
+  // true while a sheet is open over the game: the timer stops
+  paused: boolean
   onBack: () => void
   onSettings: () => void
 }
 
-export function Game({ initial, autoCross, onBack, onSettings }: Props) {
-  const { state, start, toggleCross, placeCat, undo, retry } = useGame(() => initial, autoCross)
+export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) {
+  const { state, winResult, start, toggleCross, placeCat, undo, tick, retry } = useGame(() => initial, autoCross)
   const [loading, setLoading] = useState(false)
   const onCellTap = useDoubleTap({ onCross: toggleCross, onCat: placeCat })
   const size = SIZES[state.difficulty]
+  useGameTimer(state.status === 'playing' && !loading && !paused, tick)
   const daily = state.mode === 'daily'
 
   const nextPuzzle = async () => {
@@ -39,9 +44,12 @@ export function Game({ initial, autoCross, onBack, onSettings }: Props) {
         <button type="button" className={styles.back} aria-label="Back" onClick={onBack}>
           <BackIcon />
         </button>
-        <h1 className={styles.title}>
-          {daily ? `Daily, ${formatDay(state.puzzle.id.slice('daily-'.length))}` : `${LABELS[state.difficulty]} ${size}×${size}`}
-        </h1>
+        <div className={styles.titles}>
+          <h1 className={styles.title}>
+            {daily ? `Daily, ${formatDay(state.puzzle.id.slice('daily-'.length))}` : `${LABELS[state.difficulty]} ${size}×${size}`}
+          </h1>
+          <span className={styles.timer}>{formatTime(state.elapsedMs)}</span>
+        </div>
         <Lives lives={state.lives} />
         <button type="button" className={styles.back} aria-label="Settings" onClick={onSettings}>
           <GearIcon />
@@ -58,7 +66,12 @@ export function Game({ initial, autoCross, onBack, onSettings }: Props) {
           <Controls canUndo={state.status === 'playing' && state.history.length > 0} onUndo={undo} />
         </>
       )}
-      {state.status === 'won' && !loading && <WinDialog lives={state.lives} daily={daily} onNext={nextPuzzle} onHome={onBack} />}
+      {state.status === 'won' && !loading && <WinDialog
+          lives={state.lives}
+          daily={daily}
+          timeMs={state.elapsedMs}
+          isBest={winResult?.isBest ?? false}
+          counts={winResult?.counts ?? true} onNext={nextPuzzle} onHome={onBack} />}
       {state.status === 'lost' && <LoseDialog onRetry={retry} onHome={onBack} />}
     </div>
   )

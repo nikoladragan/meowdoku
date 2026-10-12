@@ -1,3 +1,4 @@
+import { EMPTY_STATS, type AllStats, type StatsKey } from './stats'
 import type { GameState, Mark, Mode, Patch, Puzzle, Settings } from './types'
 
 const PREFIX = 'meowdoku:v1:'
@@ -97,6 +98,32 @@ export function loadSettings(): Settings {
 export function saveSettings(settings: Settings): void {
   try {
     localStorage.setItem(`${PREFIX}settings`, JSON.stringify(settings))
+  } catch {
+    // ignore
+  }
+}
+
+export function loadStats(): AllStats {
+  const out: AllStats = JSON.parse(JSON.stringify(EMPTY_STATS))
+  try {
+    const raw = localStorage.getItem(`${PREFIX}stats`)
+    const parsed: unknown = raw ? JSON.parse(raw) : null
+    if (!isObj(parsed)) return out
+    for (const key of Object.keys(out) as StatsKey[]) {
+      const v = parsed[key]
+      if (isObj(v) && isInt(v.wins, 0, 1e9) && (v.bestMs === null || (typeof v.bestMs === 'number' && v.bestMs >= 0))) {
+        out[key] = { wins: v.wins, bestMs: v.bestMs }
+      }
+    }
+  } catch {
+    // keep defaults
+  }
+  return out
+}
+
+export function saveStats(stats: AllStats): void {
+  try {
+    localStorage.setItem(`${PREFIX}stats`, JSON.stringify(stats))
   } catch {
     // ignore
   }

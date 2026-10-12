@@ -210,3 +210,24 @@ describe('undo', () => {
     expect(reducer(s, { type: 'undo' })).toBe(s)
   })
 })
+
+describe('tick', () => {
+  it('adds time only while playing and never touches lastEvent', () => {
+    s = reducer(s, { type: 'toggleCross', cell: 3 })
+    const event = s.lastEvent
+    s = reducer(s, { type: 'tick', deltaMs: 1000 })
+    s = reducer(s, { type: 'tick', deltaMs: 500 })
+    expect(s.elapsedMs).toBe(1500)
+    expect(s.lastEvent).toBe(event)
+    for (let r = 0; r < 3; r++) s = reducer(s, { type: 'placeCat', cell: bad(r) })
+    expect(s.status).toBe('lost')
+    expect(reducer(s, { type: 'tick', deltaMs: 1000 }).elapsedMs).toBe(1500)
+  })
+
+  it('retry resets the time', () => {
+    s = reducer(s, { type: 'tick', deltaMs: 4000 })
+    s = reducer(s, { type: 'retry' })
+    expect(s.elapsedMs).toBe(0)
+    expect(s.attempt).toBe(2)
+  })
+})

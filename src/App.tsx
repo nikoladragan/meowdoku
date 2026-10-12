@@ -71,6 +71,7 @@ export default function App() {
         <Game
           initial={screen.initial}
           autoCross={settings.autoCross}
+          paused={settingsOpen}
           onBack={home}
           onSettings={() => setSettingsOpen(true)}
         />

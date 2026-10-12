@@ -8,6 +8,7 @@ export type Action =
   | { type: 'toggleCross'; cell: number }
   | { type: 'placeCat'; cell: number; fromDoubleTap?: boolean; autoCross?: boolean }
   | { type: 'undo' }
+  | { type: 'tick'; deltaMs: number }
   | { type: 'retry' }
 
 export function createGameState(mode: Mode, difficulty: Difficulty, puzzle: Puzzle): GameState {
@@ -147,6 +148,8 @@ export function reducer(state: GameState, action: Action): GameState {
         attempt: state.attempt + 1,
         lastEvent: null,
       }
+    case 'tick':
+      return state.status === 'playing' ? { ...state, elapsedMs: state.elapsedMs + action.deltaMs } : state
     case 'undo':
       return state.status === 'playing' ? undo(state) : state
     case 'toggleCross':
