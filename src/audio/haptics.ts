@@ -1,26 +1,33 @@
-// navigator.vibrate wrapper. iOS Safari has no vibration API, so this only does something on Android.
+// Haptic feedback through web-haptics: navigator.vibrate on Android, and on iOS Safari (17.4+) a
+// light tick from a hidden <input type="checkbox" switch>. On iOS this is a tap, not a pattern.
+import { WebHaptics } from 'web-haptics'
 import type { GameEvent } from '../game/types'
 
 let enabled = true
+let haptics: WebHaptics | null = null
 
 export function setVibrationEnabled(value: boolean): void {
   enabled = value
 }
 
+// Android has the Vibration API and iOS gets the switch trick, so any touch device qualifies.
 export function vibrationSupported(): boolean {
-  return typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function'
+  if (typeof navigator === 'undefined') return false
+  return WebHaptics.isSupported || navigator.maxTouchPoints > 0
 }
 
+export type HapticPreset = 'light' | 'error' | 'success'
+
 // Nothing for crosses and undo.
-export function vibrationFor(kind: GameEvent['kind']): number | number[] | null {
+export function vibrationFor(kind: GameEvent['kind']): HapticPreset | null {
   switch (kind) {
     case 'cat':
-      return 10
+      return 'light'
     case 'miss':
     case 'lose':
-      return [30, 40, 30]
+      return 'error'
     case 'win':
-      return [20, 60, 20, 60, 40]
+      return 'success'
     default:
       return null
   }
@@ -28,6 +35,8 @@ export function vibrationFor(kind: GameEvent['kind']): number | number[] | null 
 
 export function vibrateFor(kind: GameEvent['kind']): void {
   if (!enabled || !vibrationSupported()) return
-  const pattern = vibrationFor(kind)
-  if (pattern !== null) navigator.vibrate(pattern)
+  const preset = vibrationFor(kind)
+  if (preset === null) return
+  haptics ??= new WebHaptics()
+  void haptics.trigger(preset).catch(() => {})
 }

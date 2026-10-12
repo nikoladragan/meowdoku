@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { vibrationFor } from './haptics'
 
 describe('vibrationFor', () => {
-  it('uses the planned patterns', () => {
-    expect(vibrationFor('cat')).toBe(10)
-    expect(vibrationFor('miss')).toEqual([30, 40, 30])
-    expect(vibrationFor('win')).toEqual([20, 60, 20, 60, 40])
+  it('maps events to haptic presets', () => {
+    expect(vibrationFor('cat')).toBe('light')
+    expect(vibrationFor('miss')).toBe('error')
+    expect(vibrationFor('lose')).toBe('error')
+    expect(vibrationFor('win')).toBe('success')
   })
 
   it('is silent for crosses and undo', () => {
