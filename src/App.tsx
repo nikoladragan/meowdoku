@@ -32,7 +32,7 @@ export default function App() {
 
   return (
     <div className={styles.app}>
-      {screen.name === 'home' && <Home onPlay={play} />}
+      {screen.name === 'home' && <Home onPlay={play} onContinue={(initial) => setScreen({ name: 'game', initial })} />}
       {screen.name === 'loading' && <Loading />}
       {screen.name === 'game' && <Game initial={screen.initial} onBack={home} />}
     </div>
