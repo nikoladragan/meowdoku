@@ -34,17 +34,22 @@ export type CellAnim = 'popCross' | 'popCat' | 'ripple' | 'miss' | 'undo' | 'hop
 export type HintCellState = 'target' | 'related' | 'reason' | 'dim' | null
 
 // Taps this close to a cell's edge are ignored, so a near miss does not land on the neighbour.
+// The lighter pad drawn inside each cell shows the part that does take a tap.
 const DEAD_ZONE_PX = 4
 
+// True for a tap outside the pad. Measured inside the cell's own lines, like the pad itself.
 // Keyboard and screen-reader clicks have no position (detail 0) and always count.
 function nearEdge(e: React.MouseEvent<HTMLElement>): boolean {
   if (e.detail === 0) return false
-  const r = e.currentTarget.getBoundingClientRect()
+  const cell = e.currentTarget
+  const r = cell.getBoundingClientRect()
+  const x = e.clientX - r.left
+  const y = e.clientY - r.top
   return (
-    e.clientX < r.left + DEAD_ZONE_PX ||
-    e.clientX > r.right - DEAD_ZONE_PX ||
-    e.clientY < r.top + DEAD_ZONE_PX ||
-    e.clientY > r.bottom - DEAD_ZONE_PX
+    x < DEAD_ZONE_PX ||
+    y < DEAD_ZONE_PX ||
+    x > cell.clientWidth - DEAD_ZONE_PX ||
+    y > cell.clientHeight - DEAD_ZONE_PX
   )
 }
 
@@ -79,6 +84,7 @@ export const Cell = memo(function Cell({
       style={
         {
           '--cell-bg': `var(--region-${colorIndex})`,
+          '--dead-zone': `${DEAD_ZONE_PX}px`,
           '--anim-delay': `${animDelay}ms`,
         } as React.CSSProperties
       }

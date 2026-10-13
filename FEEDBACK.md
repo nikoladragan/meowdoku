@@ -58,8 +58,8 @@ The reason was true every time. A test now replays messy games and checks each h
 A tap that slightly misses a cell lands on the cell next to it.
 
 **What changed**
-The outer 4 px of every cell is dead space: a tap there does nothing. The board looks the same, there is no visible gap. Keyboard and screen-reader activation always count. The width is `DEAD_ZONE_PX` in [src/components/Cell/Cell.tsx](src/components/Cell/Cell.tsx).
+The outer 4 px of every cell is dead space: a tap there does nothing. Each cell shows a lighter rounded pad, which is exactly the part that takes a tap, so the dead space is visible as the rim around it. Region colours and borders are unchanged. Keyboard and screen-reader activation always count. The width is `DEAD_ZONE_PX` in [src/components/Cell/Cell.tsx](src/components/Cell/Cell.tsx); the pad follows it.
 
 **Still to decide**
-- Whether 4 px feels right on a real phone, and whether the gap should be visible.
+- Whether 4 px and the pad feel right on a real phone. The pad is on trial.
 - A double-tap whose second tap slips onto the neighbour still gives two crosses instead of a cat. It could count as a double-tap when the two taps land a few pixels apart.

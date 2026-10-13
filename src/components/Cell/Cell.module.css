@@ -12,6 +12,7 @@
   border-bottom: var(--line) solid var(--line-soft);
   border-radius: 0;
   background: var(--cell-bg);
+  isolation: isolate;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
@@ -31,14 +32,23 @@
   transform: none;
 }
 
-/* A cell where a wrong cat was tried: red-tinted, with a red cross. */
-.missed::before {
+/* The pad: the part of the cell that takes a tap. Taps on the rim around it are ignored. */
+.cell::before {
   content: '';
   position: absolute;
+  inset: var(--dead-zone);
+  z-index: -1;
+  border-radius: 22%;
+  background: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
+
+/* A cell where a wrong cat was tried: red-tinted edge to edge, with a red cross. */
+.missed::before {
   inset: 0;
+  border-radius: 0;
   background: var(--danger);
   opacity: 0.3;
-  pointer-events: none;
 }
 
 /* Hint highlighting: target cells get a ring, the cells the hint rests on a dashed outline,
