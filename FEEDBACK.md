@@ -51,3 +51,15 @@ The reason was true every time. A test now replays messy games and checks each h
 - The spots a hint rests on get a dashed outline on the board, for blocking and confinement hints.
 - [src/game/hintText.ts](src/game/hintText.ts) says how many spots are left and how the cat rules them out (touching, same row, column or region).
 - The hint bar grows with its text instead of clipping long hints on narrow phones.
+
+## 3. Taps landing on the neighbouring cell · `done`
+
+**What happens now**
+A tap that slightly misses a cell lands on the cell next to it.
+
+**What changed**
+The outer 4 px of every cell is dead space: a tap there does nothing. The board looks the same, there is no visible gap. Keyboard and screen-reader activation always count. The width is `DEAD_ZONE_PX` in [src/components/Cell/Cell.tsx](src/components/Cell/Cell.tsx).
+
+**Still to decide**
+- Whether 4 px feels right on a real phone, and whether the gap should be visible.
+- A double-tap whose second tap slips onto the neighbour still gives two crosses instead of a cat. It could count as a double-tap when the two taps land a few pixels apart.
