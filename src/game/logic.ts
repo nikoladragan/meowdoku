@@ -23,7 +23,7 @@ export interface Step {
   into: number[]
 }
 
-type RawStep = Omit<Step, 'level'>
+export type RawStep = Omit<Step, 'level'>
 
 // The row, column and region unit of a cell.
 export function unitsOf(n: number, regions: number[], cell: number): number[] {
@@ -44,6 +44,11 @@ export function peerCells(n: number, regions: number[], cell: number): number[] 
     }
   }
   return out
+}
+
+// True if two cells touch, diagonals included.
+export function touches(n: number, a: number, b: number): boolean {
+  return Math.abs(((a / n) | 0) - ((b / n) | 0)) <= 1 && Math.abs((a % n) - (b % n)) <= 1
 }
 
 export function createBoard(n: number, regions: number[]): LogicBoard {
@@ -143,9 +148,11 @@ function findConfinement(board: LogicBoard, k: number): RawStep | null {
   return null
 }
 
-// A candidate whose cat would rule out every candidate of some other open unit.
-function findBlocks(board: LogicBoard): RawStep | null {
+// Candidates whose cat would rule out every candidate of some other open unit, in board order.
+// Grading stops at the first one; hints look at all of them to pick the clearest.
+export function findBlocks(board: LogicBoard, limit = Infinity): RawStep[] {
   const { n, regions, unitCells, cand, unitDone, peers } = board
+  const out: RawStep[] = []
   for (let i = 0; i < n * n; i++) {
     if (!cand[i]) continue
     const own = unitsOf(n, regions, i)
@@ -161,10 +168,13 @@ function findBlocks(board: LogicBoard): RawStep | null {
           break
         }
       }
-      if (any && all) return { technique: 'blocks', action: 'cross', cells: [i], units: [u], into: [] }
+      if (any && all) {
+        out.push({ technique: 'blocks', action: 'cross', cells: [i], units: [u], into: [] })
+        if (out.length >= limit) return out
+      }
     }
   }
-  return null
+  return out
 }
 
 // Next deduction on this board using techniques up to `maxLevel`, or null if stuck.
@@ -172,7 +182,7 @@ export function findStep(board: LogicBoard, maxLevel = 5): Step | null {
   let step = findSingle(board)
   if (step) return { level: 1, ...step }
   if (maxLevel >= 2 && (step = findConfinement(board, 1))) return { level: 2, ...step }
-  if (maxLevel >= 3 && (step = findBlocks(board))) return { level: 3, ...step }
+  if (maxLevel >= 3 && (step = findBlocks(board, 1)[0] ?? null)) return { level: 3, ...step }
   if (maxLevel >= 4 && (step = findConfinement(board, 2))) return { level: 4, ...step }
   if (maxLevel >= 5) {
     for (let k = 3; k <= 4; k++) {

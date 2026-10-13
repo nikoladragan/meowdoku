@@ -33,3 +33,21 @@ Keep the miss in game state next to the marks, either as a new mark value or as 
 - It is still there after a reload and after other moves, and gone after Try again or a new puzzle.
 - Undo, hints and auto-cross behave as before.
 - Tests cover the reducer change and loading a saved game that has none.
+
+---
+
+## 2. Hints that look made up · `done`
+
+**What happens now**
+Some hints, usually near the top left, mark the right cell but give a reason that seems false, for example "a cat here would leave no room for a cat in the blue region" when blue looks like it still has room.
+
+**What we found**
+The reason was true every time. A test now replays messy games and checks each hint's sentence against the marks on screen, and none fail. Two things made true hints look false:
+- The hint took the first blocking move in board order (top left first), not the clearest one. In over half of them some of the blocked spots did not touch the hinted cell: they were ruled out by sharing its row or column, often far away.
+- The board tinted the whole region and never showed which spots the sentence was counting, so there was no way to check it.
+
+**What changed**
+- [src/game/hints.ts](src/game/hints.ts) picks the blocking move that is easiest to see: fewest spots that do not touch the cell, then fewest spots.
+- The spots a hint rests on get a dashed outline on the board, for blocking and confinement hints.
+- [src/game/hintText.ts](src/game/hintText.ts) says how many spots are left and how the cat rules them out (touching, same row, column or region).
+- The hint bar grows with its text instead of clipping long hints on narrow phones.

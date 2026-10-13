@@ -1,4 +1,4 @@
-import { boardPlaceCat, createBoard, findStep } from './logic'
+import { boardPlaceCat, createBoard, findBlocks, findStep, touches, type LogicBoard, type RawStep } from './logic'
 import type { GameState } from './types'
 
 export interface Hint {
@@ -7,7 +7,7 @@ export interface Hint {
   cells: number[] // cells the player should act on
   units: number[] // rows, columns or regions that explain it
   into: number[] // confine only: the lines or regions being claimed
-  reasonCells: number[] // catExclusion only: the cat responsible
+  reasonCells: number[] // what it rests on: the cat (catExclusion) or the spots left in `units` (blocks, confine)
 }
 
 const hint = (kind: Hint['kind'], action: Hint['action'], cells: number[], extra: Partial<Hint> = {}): Hint => ({
@@ -19,6 +19,21 @@ const hint = (kind: Hint['kind'], action: Hint['action'], cells: number[], extra
   reasonCells: [],
   ...extra,
 })
+
+// The cells of these units that could still hold a cat.
+function spotsLeft(board: LogicBoard, units: number[]): number[] {
+  return units.flatMap((u) => board.unitCells[u].filter((i) => board.cand[i]))
+}
+
+// The blocking move that is easiest to check by eye: fewest spots that do not touch the cell,
+// then fewest spots. The first one in board order is often a far-fetched one in the top corner.
+function clearestBlock(board: LogicBoard): RawStep {
+  const cost = (step: RawStep) => {
+    const spots = spotsLeft(board, step.units)
+    return spots.filter((j) => !touches(board.n, step.cells[0], j)).length * 100 + spots.length
+  }
+  return findBlocks(board).reduce((best, step) => (cost(step) < cost(best) ? step : best))
+}
 
 // The next thing the player should do on their current board.
 export function getHint(state: GameState): Hint {
@@ -45,9 +60,11 @@ export function getHint(state: GameState): Hint {
   }
 
   // 3. The next logic step, always with all five levels.
-  const step = findStep(board, 5)
-  if (step) {
-    return hint(step.technique, step.action, step.cells, { units: step.units, into: step.into })
+  const found = findStep(board, 5)
+  if (found) {
+    const step = found.technique === 'blocks' ? clearestBlock(board) : found
+    const reasonCells = step.action === 'cross' ? spotsLeft(board, step.units) : []
+    return hint(step.technique, step.action, step.cells, { units: step.units, into: step.into, reasonCells })
   }
 
   // 4. Safety net: show where the first missing cat goes.
