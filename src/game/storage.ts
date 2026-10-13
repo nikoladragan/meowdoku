@@ -90,7 +90,7 @@ export function clearGame(mode: Mode): void {
   }
 }
 
-export const DEFAULT_SETTINGS: Settings = { muted: false, vibrate: true, autoCross: true, seenHowTo: false }
+export const DEFAULT_SETTINGS: Settings = { muted: false, autoCross: true, seenHowTo: false }
 
 // Unknown or malformed fields fall back to their defaults.
 export function loadSettings(): Settings {

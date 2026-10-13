@@ -44,7 +44,6 @@ export interface GameState {
 
 export interface Settings {
   muted: boolean
-  vibrate: boolean
   autoCross: boolean
   seenHowTo: boolean
 }

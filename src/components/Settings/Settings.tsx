@@ -1,4 +1,3 @@
-import { vibrationSupported } from '../../audio/haptics'
 import type { Settings as SettingsData } from '../../game/types'
 import { Dialog } from '../Dialog/Dialog'
 import styles from './Settings.module.css'
@@ -40,13 +39,6 @@ export function Settings({ settings, onChange, onHowTo, onClose }: Props) {
         checked={!settings.muted}
         onToggle={() => onChange({ ...settings, muted: !settings.muted })}
       />
-      {vibrationSupported() && (
-        <Toggle
-          label="Vibration"
-          checked={settings.vibrate}
-          onToggle={() => onChange({ ...settings, vibrate: !settings.vibrate })}
-        />
-      )}
       <Toggle
         label="Auto-cross"
         hint="Cross out cells a new cat rules out"

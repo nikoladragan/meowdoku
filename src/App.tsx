@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { setVibrationEnabled } from './audio/haptics'
 import { setMuted, unlockAudio } from './audio/sfx'
 import styles from './App.module.css'
 import { ArtGallery } from './components/ArtGallery/ArtGallery'
@@ -32,8 +31,7 @@ export default function App() {
 
   useEffect(() => {
     setMuted(settings.muted)
-    setVibrationEnabled(settings.vibrate)
-  }, [settings.muted, settings.vibrate])
+  }, [settings.muted])
 
   // Browsers only allow audio after a user gesture.
   useEffect(() => {

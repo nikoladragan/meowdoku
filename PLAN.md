@@ -28,7 +28,7 @@ Every puzzle has exactly one solution and can be solved by logic alone, with no 
 | Hints | Unlimited. Each hint points at the next logical step and explains why |
 | Timer | Counts up per puzzle. Best time per difficulty is saved |
 | Art | Inline SVG cats and icons drawn in code, pastel palette. No image files |
-| Feedback | Synthesised sound effects (Web Audio, no audio files), CSS animations, and light vibration where the device supports it |
+| Feedback | Synthesised sound effects (Web Audio, no audio files) and CSS animations. No vibration: iOS gives web pages no usable way to trigger it |
 | Backend | None. Puzzles are generated in the browser, progress is in `localStorage` |
 
 Out of scope for this version: desktop layout, keyboard controls and shortcuts, streaks, leaderboards, campaign levels, drag-to-cross, dark mode, accounts, PWA/offline install. Do not build these.
@@ -73,7 +73,6 @@ src/
     debug.ts                 dev-only `?debug`, `?art` and `?date=` switches (section 15)
     *.test.ts
   audio/sfx.ts               Web Audio sound effects
-  audio/haptics.ts           navigator.vibrate wrapper
   hooks/
     useGame.ts               reducer + persistence + sound triggers + stats
     useDoubleTap.ts          tap versus double-tap on a cell
@@ -127,7 +126,7 @@ export interface GameState {
   lastEvent: GameEvent | null;  // drives sound and animation; never persisted
 }
 
-export interface Settings { muted: boolean; vibrate: boolean; autoCross: boolean; seenHowTo: boolean }
+export interface Settings { muted: boolean; autoCross: boolean; seenHowTo: boolean }
 export interface Stats { wins: number; bestMs: number | null }   // one per difficulty, plus one for daily
 ```
 
@@ -307,7 +306,7 @@ Hint UI:
 
 **Dialogs** (one `Dialog` component, shown as a bottom sheet: slides up from the bottom, full width up to 640 px, rounded top corners, dimmed backdrop, tap the backdrop or the close button to dismiss where closing is allowed)
 - How to play: the four rules, the controls, the lives rule, what Undo and Hint do. Opens automatically on the first visit.
-- Settings: Sound, Vibration (only shown if `navigator.vibrate` exists), Auto-cross, link to How to play.
+- Settings: Sound, Auto-cross, link to How to play.
 - Win: "Purrfect!", time, crackers left, hints used, best-time badge. Buttons "Next puzzle" (free play) or "Home" (daily).
 - Lose: "Out of crackers", buttons "Try again" (same puzzle) and "Home". Do not reveal the solution, since retry is allowed.
 
@@ -362,8 +361,6 @@ Mood: cosy, soft, rounded. Light theme only.
 
 `useGame` plays event sounds in an effect keyed on `lastEvent.seq`. The mute setting is persisted and respected everywhere.
 
-**Vibration** (`audio/haptics.ts`): in the same effect, call `navigator.vibrate` when it exists and the Vibration setting is on: 10 ms for `cat`, `[30, 40, 30]` for `miss`, `[20, 60, 20, 60, 40]` for `win`. Nothing for crosses. iOS Safari has no vibration API, so this only does something on Android.
-
 **Animation** (CSS keyframes, driven by `lastEvent`):
 
 | Event | Animation |
@@ -384,7 +381,7 @@ Wrap all motion in `@media (prefers-reduced-motion: no-preference)` and skip con
 
 | Key | Value |
 | --- | --- |
-| `settings` | `Settings`, defaults `{ muted: false, vibrate: true, autoCross: true, seenHowTo: false }` |
+| `settings` | `Settings`, defaults `{ muted: false, autoCross: true, seenHowTo: false }` |
 | `game:free` | the last free-play `GameState` |
 | `game:daily` | the daily `GameState`; discarded if its puzzle id is not today's |
 | `stats` | `Record<Difficulty \| 'daily', Stats>` |
@@ -405,7 +402,7 @@ Wrap all motion in `@media (prefers-reduced-motion: no-preference)` and skip con
    - *How to test*: the numbered list from that step below, adjusted if anything was built differently. Each item says what to do and what should happen.
    - *Known gaps*: anything in the step that is not working or was left out. Say "none" if there are none.
 4. **Then stop and wait.** If the user reports a problem, fix it inside the same step and send updated test instructions for the fix.
-5. The "How to test" lists assume the user's phone, on the same Wi-Fi as the computer. Chrome DevTools device mode at 360×740 is a fallback, not a replacement: double-tap, zoom, vibration and sound must be checked on a real phone.
+5. The "How to test" lists assume the user's phone, on the same Wi-Fi as the computer. Chrome DevTools device mode at 360×740 is a fallback, not a replacement: double-tap, zoom and sound must be checked on a real phone.
 
 ### Debug switches (development builds only)
 
@@ -514,7 +511,7 @@ Implemented in `game/debug.ts`, active only when `import.meta.env.DEV` is true. 
 6. Open `<url>/?date=2026-10-13` (any other date). The card says "Play" again and the board is a different one.
 
 ### Step 10: settings and auto-cross
-**Build:** the Settings sheet (gear button on Home and in the game header) with the Auto-cross switch, the settings storage, and auto-cross in `placeCat`. Sound and Vibration switches are added in step 17.
+**Build:** the Settings sheet (gear button on Home and in the game header) with the Auto-cross switch, the settings storage, and auto-cross in `placeCat`. The Sound switch is added in step 17.
 **Tests to write:** auto-cross crosses exactly the cat's row, column, region and the cells touching it, and leaves existing marks alone.
 **How to test** (with `?debug`):
 1. Tap the gear. A sheet slides up with an "Auto-cross" switch, turned on.
@@ -589,17 +586,16 @@ Implemented in `game/debug.ts`, active only when `import.meta.env.DEV` is true. 
 8. Reload in the middle of a game. Nothing animates on load.
 9. Turn on "Reduce Motion" in the phone's accessibility settings and repeat items 2, 3 and 6. The game still works, without shaking, hopping or confetti.
 
-### Step 17: sound and vibration
-**Build:** `sfx.ts`, `haptics.ts`, the Sound and Vibration switches in Settings.
+### Step 17: sound
+**Build:** `sfx.ts` and the Sound switch in Settings.
 **How to test** (on an iPhone, turn the ring/silent switch to ring first, otherwise the browser plays nothing):
 1. Tap a cell: a soft tick.
-2. Place a correct cat: a short "mew". On Android you also feel a short buzz.
-3. Double-tap a wrong cell: a low buzz sound. On Android, a double vibration.
+2. Place a correct cat: a short "mew".
+3. Double-tap a wrong cell: a low buzz sound.
 4. Tap Undo: a lower tick. Open a hint: a two-note chime.
 5. Win: a rising run of notes. Lose: a falling one.
 6. Open Settings and turn Sound off. Repeat items 1 to 3: silence. Reload: still silent.
-7. On Android, turn Vibration off: no more buzzing. On an iPhone the Vibration switch is not shown.
-8. Reload in the middle of a game. No sound plays on load.
+7. Reload in the middle of a game. No sound plays on load.
 
 ### Step 18: final pass
 **Build:** `aria-label`s on cells and icon buttons, page title, favicon (the cat SVG), theme colour meta tag, a short `README.md` with run instructions, and a check that the debug switches do nothing in a production build.

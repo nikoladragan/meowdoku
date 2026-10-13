@@ -4,7 +4,7 @@ A frontend-only clone of the cat logic puzzle Meowdoku, built with React and Typ
 
 - Free play at four sizes (5×5, 7×7, 9×9, 10×10) and a daily puzzle that is the same for everyone on a given date.
 - Unlimited hints that explain the next logical step, undo, auto-cross, a timer with best times.
-- Synthesised sound, haptics via `web-haptics` (vibration on Android, a light tick on iOS 17.4+), and installable as a PWA that works offline.
+- Synthesised sound, and installable as a PWA that works offline.
 - No backend: puzzles are generated in the browser and progress is stored in `localStorage`.
 
 ## Run it
