@@ -1,0 +1,92 @@
+/* Idle motion: the cat blinks, twitches its whiskers and flicks an ear, each on its own clock.
+   --cat-a, --cat-b and --cat-c are numbers from 0 to 1 that differ per cat, so cats on the
+   board keep different time. Each part turns around its own box, not the drawing's corner. */
+.eye,
+.whiskers,
+.ear {
+  transform-box: fill-box;
+}
+
+.eye {
+  transform-origin: center;
+}
+
+/* Whiskers turn around the end on the cheek, ears around their base. --flip mirrors the right side. */
+.whiskers {
+  transform-origin: 100% 50%;
+}
+
+.whiskers.right {
+  transform-origin: 0% 50%;
+}
+
+.ear {
+  transform-origin: 50% 100%;
+}
+
+.right {
+  --flip: -1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .eye {
+    animation: blink calc(4s + var(--cat-a, 0) * 2s) ease-in-out calc(var(--cat-a, 0) * -6s) infinite;
+  }
+
+  .whiskers {
+    animation: whisker-twitch calc(6s + var(--cat-b, 0) * 3s) ease-in-out calc(var(--cat-b, 0) * -9s)
+      infinite;
+  }
+
+  .ear {
+    animation: ear-flick calc(7s + var(--cat-c, 0) * 4s) ease-in-out calc(var(--cat-c, 0) * -11s)
+      infinite;
+  }
+
+  /* The right ear flicks about half a cycle after the left one, so only one ear moves at a time. */
+  .ear.right {
+    animation-delay: calc(var(--cat-c, 0) * -11s - 4.5s);
+  }
+}
+
+@keyframes blink {
+  0%,
+  95%,
+  100% {
+    transform: scaleY(1);
+  }
+  97.5% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes whisker-twitch {
+  0%,
+  92%,
+  100% {
+    transform: rotate(0deg);
+  }
+  94% {
+    transform: rotate(calc(var(--flip, 1) * 12deg));
+  }
+  96% {
+    transform: rotate(calc(var(--flip, 1) * -8deg));
+  }
+  98% {
+    transform: rotate(calc(var(--flip, 1) * 5deg));
+  }
+}
+
+@keyframes ear-flick {
+  0%,
+  94%,
+  100% {
+    transform: rotate(0deg);
+  }
+  96% {
+    transform: rotate(calc(var(--flip, 1) * -12deg));
+  }
+  98% {
+    transform: rotate(calc(var(--flip, 1) * 4deg));
+  }
+}

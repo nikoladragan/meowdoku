@@ -91,7 +91,7 @@ export const Cell = memo(function Cell({
         if (!nearEdge(e)) onTap(index)
       }}
     >
-      {mark === 'cat' && <Cat fur={fur} />}
+      {mark === 'cat' && <Cat fur={fur} seed={index} />}
       {mark === 'cross' && <Cross />}
       {mark === 'miss' && <Cross miss />}
       {mark === 'empty' && debugCat && <PawDot />}

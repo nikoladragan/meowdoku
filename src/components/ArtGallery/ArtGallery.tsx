@@ -38,7 +38,7 @@ export function ArtGallery() {
           <div className={`${styles.row} ${styles.row5}`}>
             {COLORS.map((c) => (
               <Swatch key={c} color={c} size="s5">
-                <Cat fur={fur} />
+                <Cat fur={fur} seed={c} />
               </Swatch>
             ))}
           </div>
@@ -52,7 +52,7 @@ export function ArtGallery() {
           <div className={`${styles.row} ${styles.row10}`}>
             {COLORS.map((c) => (
               <Swatch key={c} color={c} size="s10">
-                <Cat fur={fur} />
+                <Cat fur={fur} seed={c} />
               </Swatch>
             ))}
           </div>
