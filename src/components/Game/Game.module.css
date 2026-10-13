@@ -26,6 +26,10 @@
   background: transparent;
 }
 
+.back:disabled {
+  opacity: 0.35;
+}
+
 .titles {
   flex: 1;
   min-width: 0;
@@ -55,6 +59,12 @@
   flex-direction: column;
   justify-content: center;
   gap: 12px;
+}
+
+/* The crackers sit just above the board, out of the header. */
+.lives {
+  display: flex;
+  justify-content: center;
 }
 
 .side {

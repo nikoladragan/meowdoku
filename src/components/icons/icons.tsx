@@ -44,6 +44,13 @@ export const UndoIcon = (p: IconProps) => (
   </Icon>
 )
 
+export const RestartIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M3 12 A9 9 0 1 0 12 3 C9.5 3 7.1 4 5.3 5.7 L3 8" />
+    <path d="M3 3 V8 H8" />
+  </Icon>
+)
+
 export const BulbIcon = (p: IconProps) => (
   <Icon {...p}>
     <path d="M9 18 H15 M10 21 H14" />
