@@ -3,6 +3,7 @@ import { formatDay, loadTodaysDaily, todayKey } from '../../game/daily'
 import { formatTime } from '../../game/stats'
 import { loadGame, loadStats } from '../../game/storage'
 import { DIFFICULTIES, LABELS, SIZES, type Difficulty, type GameState } from '../../game/types'
+import { VERSION } from '../../version'
 import { GearIcon, HelpIcon } from '../icons/icons'
 import { TitleCat } from '../TitleCat/TitleCat'
 import styles from './Home.module.css'
@@ -40,6 +41,7 @@ export function Home({ onPlay, onPlayDaily, onContinue, onSettings, onHowTo }: P
       <div className={styles.hero}>
         <TitleCat size={130} />
         <h1 className={styles.title}>Meowdoku</h1>
+        <span className={styles.version}>v{VERSION}</span>
       </div>
       <div className={styles.buttons}>
         <button

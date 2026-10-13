@@ -21,6 +21,12 @@
   font-size: 2.5rem;
 }
 
+.version {
+  color: var(--ink-soft);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
 .buttons {
   width: 100%;
   display: flex;
