@@ -63,3 +63,22 @@ The outer 4 px of every cell is dead space: a tap there does nothing. Each cell 
 **Still to decide**
 - Whether 4 px and the pad feel right on a real phone. The pad is on trial.
 - A double-tap whose second tap slips onto the neighbour still gives two crosses instead of a cat. It could count as a double-tap when the two taps land a few pixels apart.
+
+## 4. No way home after a win · `done`
+
+**What happens now**
+After solving a free-play puzzle the result sheet only offers "Next puzzle".
+
+**What changed**
+The sheet now has "Home" under "Next puzzle". The daily sheet is unchanged: it only ever had "Home".
+
+## 5. Restart a puzzle while playing · `done`
+
+**What we want**
+A way to start over mid-game, either on the same puzzle or on a fresh one.
+
+**What changed**
+- A restart button sits in the game header, next to settings. It opens a "Start over?" sheet and the timer stops while it is open.
+- "Restart this puzzle" clears the board and refills the crackers. It counts as a retry, so the time does not count as a best.
+- "New puzzle" swaps in a fresh puzzle of the same difficulty. The daily puzzle does not offer it.
+- To keep the header from getting crowded, the crackers moved out of it to a row just above the board.

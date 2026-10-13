@@ -33,13 +33,42 @@ export function WinDialog({ lives, daily, timeMs, isBest, counts, hintsUsed, onN
         <Lives lives={lives} />
       </div>
       <div className={styles.actions}>
-        {daily ? (
-          <button type="button" className={styles.primary} onClick={onHome}>
-            Home
-          </button>
-        ) : (
+        {!daily && (
           <button type="button" className={styles.primary} onClick={onNext}>
             Next puzzle
+          </button>
+        )}
+        <button type="button" className={daily ? styles.primary : styles.secondary} onClick={onHome}>
+          Home
+        </button>
+      </div>
+    </Dialog>
+  )
+}
+
+interface RestartProps {
+  onSame: () => void
+  // Absent for the daily puzzle, which has no other puzzle to swap to.
+  onFresh?: () => void
+  onClose: () => void
+}
+
+export function RestartDialog({ onSame, onFresh, onClose }: RestartProps) {
+  return (
+    <Dialog title="Start over?" onClose={onClose}>
+      <p className={styles.text}>
+        {onFresh
+          ? 'Clear this board and try it again, or swap it for a new puzzle.'
+          : 'Clear this board and try it again.'}{' '}
+        A restarted puzzle's time does not count as a best.
+      </p>
+      <div className={styles.actions}>
+        <button type="button" className={styles.primary} onClick={onSame}>
+          Restart this puzzle
+        </button>
+        {onFresh && (
+          <button type="button" className={styles.secondary} onClick={onFresh}>
+            New puzzle
           </button>
         )}
       </div>
