@@ -38,9 +38,7 @@ export type HintCellState = 'target' | 'related' | 'reason' | 'dim' | null
 const DEAD_ZONE_PX = 4
 
 // True for a tap outside the pad. Measured inside the cell's own lines, like the pad itself.
-// Keyboard and screen-reader clicks have no position (detail 0) and always count.
-function nearEdge(e: React.MouseEvent<HTMLElement>): boolean {
-  if (e.detail === 0) return false
+function nearEdge(e: React.PointerEvent<HTMLElement>): boolean {
   const cell = e.currentTarget
   const r = cell.getBoundingClientRect()
   const x = e.clientX - r.left
@@ -89,7 +87,7 @@ export const Cell = memo(function Cell({
         } as React.CSSProperties
       }
       aria-label={`Row ${row + 1}, column ${col + 1}, ${REGION_NAMES[colorIndex]} region, ${MARK_LABEL[mark]}`}
-      onClick={(e) => {
+      onPointerDown={(e) => {
         if (!nearEdge(e)) onTap(index)
       }}
     >

@@ -8,7 +8,7 @@ interface Handlers {
 }
 
 // Tap toggles a cross at once; a second tap on the same cell within 300 ms places a cat.
-// Uses onClick (not onDoubleClick), which is unreliable on touch screens.
+// Counts the taps itself: onDoubleClick is unreliable on touch screens.
 export function useDoubleTap({ onCross, onCat }: Handlers) {
   const last = useRef<{ cell: number; time: number } | null>(null)
   return useCallback(
