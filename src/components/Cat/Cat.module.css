@@ -34,13 +34,11 @@
   }
 
   .whiskers {
-    animation: whisker-twitch calc(6s + var(--cat-b, 0) * 3s) ease-in-out calc(var(--cat-b, 0) * -9s)
-      infinite;
+    animation: whisker-twitch calc(6s + var(--cat-b, 0) * 3s) ease-in-out calc(var(--cat-b, 0) * -9s) infinite;
   }
 
   .ear {
-    animation: ear-flick calc(7s + var(--cat-c, 0) * 4s) ease-in-out calc(var(--cat-c, 0) * -11s)
-      infinite;
+    animation: ear-flick calc(7s + var(--cat-c, 0) * 4s) ease-in-out calc(var(--cat-c, 0) * -11s) infinite;
   }
 
   /* The right ear flicks about half a cycle after the left one, so only one ear moves at a time. */

@@ -35,13 +35,10 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     setWinResult({ counts: r.counts, isBest: r.isBest })
   }, [state])
 
-  const start = useCallback(
-    (mode: Mode, difficulty: Difficulty, puzzle: Puzzle) => {
-      setWinResult(null)
-      dispatch({ type: 'start', state: createGameState(mode, difficulty, puzzle) })
-    },
-    [],
-  )
+  const start = useCallback((mode: Mode, difficulty: Difficulty, puzzle: Puzzle) => {
+    setWinResult(null)
+    dispatch({ type: 'start', state: createGameState(mode, difficulty, puzzle) })
+  }, [])
   const toggleCross = useCallback((cell: number) => dispatch({ type: 'toggleCross', cell }), [])
   const placeCat = useCallback(
     (cell: number) => dispatch({ type: 'placeCat', cell, fromDoubleTap: true, autoCross }),
@@ -49,10 +46,7 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
   )
   const undo = useCallback(() => dispatch({ type: 'undo' }), [])
   const crossCells = useCallback((cells: number[]) => dispatch({ type: 'crossCells', cells }), [])
-  const placeCatDirect = useCallback(
-    (cell: number) => dispatch({ type: 'placeCat', cell, autoCross }),
-    [autoCross],
-  )
+  const placeCatDirect = useCallback((cell: number) => dispatch({ type: 'placeCat', cell, autoCross }), [autoCross])
   const hintShown = useCallback(() => dispatch({ type: 'hintShown' }), [])
   const tick = useCallback((deltaMs: number) => dispatch({ type: 'tick', deltaMs }), [])
   const retry = useCallback(() => dispatch({ type: 'retry' }), [])

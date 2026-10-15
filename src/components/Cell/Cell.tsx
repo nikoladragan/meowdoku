@@ -44,10 +44,7 @@ function nearEdge(e: React.PointerEvent<HTMLElement>): boolean {
   const x = e.clientX - r.left
   const y = e.clientY - r.top
   return (
-    x < DEAD_ZONE_PX ||
-    y < DEAD_ZONE_PX ||
-    x > cell.clientWidth - DEAD_ZONE_PX ||
-    y > cell.clientHeight - DEAD_ZONE_PX
+    x < DEAD_ZONE_PX || y < DEAD_ZONE_PX || x > cell.clientWidth - DEAD_ZONE_PX || y > cell.clientHeight - DEAD_ZONE_PX
   )
 }
 

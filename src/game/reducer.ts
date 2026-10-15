@@ -159,6 +159,8 @@ export function reducer(state: GameState, action: Action): GameState {
     case 'toggleCross':
       return state.status === 'playing' ? toggleCross(state, action.cell) : state
     case 'placeCat':
-      return state.status === 'playing' ? placeCat(state, action.cell, action.fromDoubleTap ?? false, action.autoCross ?? false) : state
+      return state.status === 'playing'
+        ? placeCat(state, action.cell, action.fromDoubleTap ?? false, action.autoCross ?? false)
+        : state
   }
 }

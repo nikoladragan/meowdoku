@@ -52,7 +52,9 @@ export function HowToPlay({ onClose }: { onClose: () => void }) {
           <span className={styles.icon}>
             <BulbIcon />
           </span>
-          <span>A hint points at the next step and explains why. Using one means your time won&apos;t count as a best.</span>
+          <span>
+            A hint points at the next step and explains why. Using one means your time won&apos;t count as a best.
+          </span>
         </p>
       </section>
 

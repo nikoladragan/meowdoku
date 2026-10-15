@@ -16,24 +16,28 @@ function apply(state: GameState, hint: Hint, autoCross: boolean): GameState {
 }
 
 describe.each([5, 7, 9, 10])('hint play-through %dx%d', (n) => {
-  it.each([true, false])('solves 30 puzzles from empty with auto-cross %s', (autoCross) => {
-    const kinds = new Set<string>()
-    for (let s = 0; s < COUNTS[n]; s++) {
-      const puzzle = generatePuzzle(`free-hint-${s}`, n)
-      let state = createGameState('free', 'easy', puzzle)
-      for (let guard = 0; state.status === 'playing'; guard++) {
-        expect(guard).toBeLessThan(500)
-        const hint = getHint(state)
-        kinds.add(hint.kind)
-        expect(hint.kind).not.toBe('reveal')
-        expect(hintText(hint, puzzle).length).toBeGreaterThan(0)
-        state = apply(state, hint, autoCross)
-        expect(state.lives).toBe(3)
+  it.each([true, false])(
+    'solves 30 puzzles from empty with auto-cross %s',
+    (autoCross) => {
+      const kinds = new Set<string>()
+      for (let s = 0; s < COUNTS[n]; s++) {
+        const puzzle = generatePuzzle(`free-hint-${s}`, n)
+        let state = createGameState('free', 'easy', puzzle)
+        for (let guard = 0; state.status === 'playing'; guard++) {
+          expect(guard).toBeLessThan(500)
+          const hint = getHint(state)
+          kinds.add(hint.kind)
+          expect(hint.kind).not.toBe('reveal')
+          expect(hintText(hint, puzzle).length).toBeGreaterThan(0)
+          state = apply(state, hint, autoCross)
+          expect(state.lives).toBe(3)
+        }
+        expect(state.status).toBe('won')
       }
-      expect(state.status).toBe('won')
-    }
-    expect(kinds.has('single')).toBe(true)
-  }, 120_000)
+      expect(kinds.has('single')).toBe(true)
+    },
+    120_000,
+  )
 })
 
 // Checks what a hint tells the player against the marks they can see, without the logic solver.
@@ -69,34 +73,38 @@ function claimError(state: GameState, hint: Hint): string | null {
 }
 
 describe.each([5, 7, 9, 10])('hint claims %dx%d', (n) => {
-  it.each([true, false])('hold on boards from messy play with auto-cross %s', (autoCross) => {
-    const kinds = new Set<string>()
-    for (let s = 0; s < 6; s++) {
-      const puzzle = generatePuzzle(`free-claims-${s}`, n)
-      const rng = mulberry32(s * 31 + n)
-      let state = createGameState('free', 'easy', puzzle)
-      for (let guard = 0; state.status === 'playing' && guard < 1500; guard++) {
-        const hint = getHint(state)
-        kinds.add(hint.kind)
-        expect(claimError(state, hint)).toBeNull()
-        if (hint.kind === 'blocks') {
-          const count = hint.reasonCells.length === 2 ? 'both' : `all ${hint.reasonCells.length}`
-          expect(hintText(hint, puzzle)).toContain(`${count} spots left`)
+  it.each([true, false])(
+    'hold on boards from messy play with auto-cross %s',
+    (autoCross) => {
+      const kinds = new Set<string>()
+      for (let s = 0; s < 6; s++) {
+        const puzzle = generatePuzzle(`free-claims-${s}`, n)
+        const rng = mulberry32(s * 31 + n)
+        let state = createGameState('free', 'easy', puzzle)
+        for (let guard = 0; state.status === 'playing' && guard < 1500; guard++) {
+          const hint = getHint(state)
+          kinds.add(hint.kind)
+          expect(claimError(state, hint)).toBeNull()
+          if (hint.kind === 'blocks') {
+            const count = hint.reasonCells.length === 2 ? 'both' : `all ${hint.reasonCells.length}`
+            expect(hintText(hint, puzzle)).toContain(`${count} spots left`)
+          }
+          // Mostly the player's own moves (crosses, cats, undo, a wrong guess), now and then the hint.
+          const cell = randInt(rng, n * n)
+          const x = rng()
+          if (x < 0.3) state = apply(state, hint, autoCross)
+          else if (x < 0.75) state = reducer(state, { type: 'toggleCross', cell })
+          else if (x < 0.85) state = reducer(state, { type: 'undo' })
+          else if (puzzle.solution[(cell / n) | 0] === cell % n || (x > 0.99 && state.lives > 1)) {
+            state = reducer(state, { type: 'placeCat', cell, autoCross })
+          }
         }
-        // Mostly the player's own moves (crosses, cats, undo, a wrong guess), now and then the hint.
-        const cell = randInt(rng, n * n)
-        const x = rng()
-        if (x < 0.3) state = apply(state, hint, autoCross)
-        else if (x < 0.75) state = reducer(state, { type: 'toggleCross', cell })
-        else if (x < 0.85) state = reducer(state, { type: 'undo' })
-        else if (puzzle.solution[(cell / n) | 0] === cell % n || (x > 0.99 && state.lives > 1)) {
-          state = reducer(state, { type: 'placeCat', cell, autoCross })
-        }
+        expect(state.status).toBe('won')
       }
-      expect(state.status).toBe('won')
-    }
-    expect(kinds.has('confine')).toBe(true)
-  }, 120_000)
+      expect(kinds.has('confine')).toBe(true)
+    },
+    120_000,
+  )
 })
 
 describe('getHint', () => {

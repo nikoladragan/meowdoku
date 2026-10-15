@@ -1,7 +1,7 @@
 import { grade, GRADE_RANGE } from './logic'
 import { hashString, mulberry32, randInt, shuffle, type Rng } from './rng'
-import type { Puzzle } from './types'
 import { DIRS, isConnectedWithout, solve } from './solver'
+import type { Puzzle } from './types'
 
 // Bump 'v1' whenever the generator, logic solver or level table changes.
 export const GENERATOR_VERSION = 'v1'

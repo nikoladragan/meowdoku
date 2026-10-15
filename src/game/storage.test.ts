@@ -1,8 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { generatePuzzle } from './generator'
-import { EMPTY_STATS } from './stats'
 import { createGameState, reducer } from './reducer'
-import { clearGame, DEFAULT_SETTINGS, loadGame, loadSettings, loadStats, saveGame, saveSettings, saveStats } from './storage'
+import { EMPTY_STATS } from './stats'
+import {
+  clearGame,
+  DEFAULT_SETTINGS,
+  loadGame,
+  loadSettings,
+  loadStats,
+  saveGame,
+  saveSettings,
+  saveStats,
+} from './storage'
 
 const store = new Map<string, string>()
 

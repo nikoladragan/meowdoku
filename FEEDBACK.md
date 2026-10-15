@@ -15,11 +15,13 @@ When you double-tap a cell that is not a cat spot, you lose a cracker and the ce
 A cell where a wrong cat was tried is clearly marked as a miss, and stays marked, so you can see at a glance where you went wrong.
 
 **Where it lives**
+
 - The reducer ([src/game/reducer.ts](src/game/reducer.ts)) turns a wrong cell into a plain `cross` and records nothing else about it.
 - Cells are drawn in [src/components/Cell/Cell.tsx](src/components/Cell/Cell.tsx) from `Mark` (`empty | cross | cat`) only.
 - A miss is not on the undo stack on purpose, so undo cannot give a cracker back.
 
 **To decide before building**
+
 1. **How should a miss look?** For example a red cross with a red-tinted cell, so it is clearly different from a normal grey cross.
 2. **Can the player clear it?** Tapping a missed cell could (a) do nothing, since the miss is a fact, or (b) turn it into a normal cross or empty.
 3. **Does it survive a reload?** Probably yes, since it is part of the game. That means saving it, and old saved games without it must still load.
@@ -29,6 +31,7 @@ A cell where a wrong cat was tried is clearly marked as a miss, and stays marked
 Keep the miss in game state next to the marks, either as a new mark value or as a list of missed cells, and render it distinctly in `Cell`. Whichever we pick, hints must keep working: a missed cell is never a solution cell, so it never triggers the "wrong cross" hint, and it must count as crossed for the logic solver.
 
 **Done when**
+
 - Missing a cell leaves a mark that is visibly different from a normal cross.
 - It is still there after a reload and after other moves, and gone after Try again or a new puzzle.
 - Undo, hints and auto-cross behave as before.
@@ -43,10 +46,12 @@ Some hints, usually near the top left, mark the right cell but give a reason tha
 
 **What we found**
 The reason was true every time. A test now replays messy games and checks each hint's sentence against the marks on screen, and none fail. Two things made true hints look false:
+
 - The hint took the first blocking move in board order (top left first), not the clearest one. In over half of them some of the blocked spots did not touch the hinted cell: they were ruled out by sharing its row or column, often far away.
 - The board tinted the whole region and never showed which spots the sentence was counting, so there was no way to check it.
 
 **What changed**
+
 - [src/game/hints.ts](src/game/hints.ts) picks the blocking move that is easiest to see: fewest spots that do not touch the cell, then fewest spots.
 - The spots a hint rests on get a dashed outline on the board, for blocking and confinement hints.
 - [src/game/hintText.ts](src/game/hintText.ts) says how many spots are left and how the cat rules them out (touching, same row, column or region).
@@ -61,6 +66,7 @@ A tap that slightly misses a cell lands on the cell next to it.
 The outer 4 px of every cell is dead space: a tap there does nothing. Each cell shows a lighter rounded pad, which is exactly the part that takes a tap, so the dead space is visible as the rim around it. Region colours and borders are unchanged. Keyboard and screen-reader activation always count. The width is `DEAD_ZONE_PX` in [src/components/Cell/Cell.tsx](src/components/Cell/Cell.tsx); the pad follows it.
 
 **Still to decide**
+
 - Whether 4 px and the pad feel right on a real phone. The pad is on trial.
 - A double-tap whose second tap slips onto the neighbour still gives two crosses instead of a cat. It could count as a double-tap when the two taps land a few pixels apart.
 
@@ -78,6 +84,7 @@ The sheet now has "Home" under "Next puzzle". The daily sheet is unchanged: it o
 A way to start over mid-game, either on the same puzzle or on a fresh one.
 
 **What changed**
+
 - A restart button sits in the game header, next to settings. It opens a "Start over?" sheet and the timer stops while it is open.
 - "Restart this puzzle" clears the board and refills the crackers. It counts as a retry, so the time does not count as a best.
 - "New puzzle" swaps in a fresh puzzle of the same difficulty. The daily puzzle does not offer it.

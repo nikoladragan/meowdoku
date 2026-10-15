@@ -129,7 +129,7 @@ describe('auto-cross', () => {
 
   it('crosses exactly the row, column, region and touching cells', () => {
     s = reducer(s, { type: 'placeCat', cell: cat, autoCross: true })
-    expect(s.lastEvent?.autoCrossed.slice().sort((a, b) => a - b)).toEqual(expected())
+    expect(s.lastEvent?.autoCrossed.toSorted((a, b) => a - b)).toEqual(expected())
     const crossed = s.marks.flatMap((m, i) => (m === 'cross' ? [i] : []))
     expect(crossed).toEqual(expected())
     expect(s.marks[cat]).toBe('cat')
@@ -227,10 +227,10 @@ describe('undo', () => {
 
 describe('retry clears misses', () => {
   it('resets a missed cell', () => {
-    let s = createGameState('free', 'easy', puzzle)
-    s = reducer(s, { type: 'placeCat', cell: bad(0) })
-    s = reducer(s, { type: 'retry' })
-    expect(s.marks).not.toContain('miss')
+    let state = createGameState('free', 'easy', puzzle)
+    state = reducer(state, { type: 'placeCat', cell: bad(0) })
+    state = reducer(state, { type: 'retry' })
+    expect(state.marks).not.toContain('miss')
   })
 })
 

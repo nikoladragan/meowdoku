@@ -1,11 +1,11 @@
+import { REGION_NAMES } from '../../game/regionStyle'
 import { Cat } from '../Cat/Cat'
 import { FURS } from '../Cat/fur'
 import { Cross } from '../Cross/Cross'
 import { FishCracker } from '../FishCracker/FishCracker'
+import { ICONS } from '../icons/iconList'
 import { PawDot } from '../PawDot/PawDot'
 import { TitleCat } from '../TitleCat/TitleCat'
-import { ICONS } from '../icons/iconList'
-import { REGION_NAMES } from '../../game/regionStyle'
 import styles from './ArtGallery.module.css'
 
 const COLORS = REGION_NAMES.map((_, i) => i)

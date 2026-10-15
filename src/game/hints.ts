@@ -55,7 +55,7 @@ export function getHint(state: GameState): Hint {
   // 2. Empty cells a placed cat rules out. Only happens with auto-cross off or after removing a cross.
   for (let i = 0; i < marks.length; i++) {
     if (marks[i] !== 'cat') continue
-    const cells = [...board.peers[i]].filter((j) => marks[j] === 'empty').sort((a, b) => a - b)
+    const cells = [...board.peers[i]].filter((j) => marks[j] === 'empty').toSorted((a, b) => a - b)
     if (cells.length) return hint('catExclusion', 'cross', cells, { reasonCells: [i] })
   }
 

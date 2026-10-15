@@ -54,7 +54,9 @@
 @media (prefers-reduced-motion: no-preference) {
   .switch,
   .switch::after {
-    transition: transform 150ms, background-color 150ms;
+    transition:
+      transform 150ms,
+      background-color 150ms;
   }
 }
 

@@ -10,10 +10,10 @@ function getWorker(): Worker | null {
   if (worker) return worker
   try {
     worker = new Worker(new URL('./generator.worker.ts', import.meta.url), { type: 'module' })
-    worker.onmessage = (e: MessageEvent<{ req: number; puzzle: Puzzle }>) => {
+    worker.addEventListener('message', (e: MessageEvent<{ req: number; puzzle: Puzzle }>) => {
       pending.get(e.data.req)?.(e.data.puzzle)
       pending.delete(e.data.req)
-    }
+    })
   } catch {
     worker = null
   }

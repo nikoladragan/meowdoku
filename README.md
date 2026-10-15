@@ -15,7 +15,9 @@ Needs Node 22 and pnpm.
 pnpm install
 pnpm dev        # dev server, also reachable from a phone on the same Wi-Fi (see the "Network" URL)
 pnpm test       # unit tests (puzzle engine, reducer, hints, storage)
-pnpm lint
+pnpm lint       # oxlint, warnings fail
+pnpm format     # oxfmt, rewrites files in place
+pnpm check      # format check, lint, type-check and tests: run before every commit
 pnpm build      # type-check and production build into dist/
 pnpm preview    # serve the production build (port 4173)
 ```
@@ -26,10 +28,10 @@ The service worker and install prompt only work over HTTPS (or `localhost`), so 
 
 Active only in `pnpm dev`, and ignored in a production build:
 
-| Switch | Effect |
-| --- | --- |
-| `?debug` | shows a paw dot on every cell where a cat belongs |
-| `?art` | shows a gallery of every cat, mark and icon |
+| Switch             | Effect                                                |
+| ------------------ | ----------------------------------------------------- |
+| `?debug`           | shows a paw dot on every cell where a cat belongs     |
+| `?art`             | shows a gallery of every cat, mark and icon           |
 | `?date=YYYY-MM-DD` | makes the app treat that date as today (daily puzzle) |
 
 `?debug` and `?date=` can be combined: `/?debug&date=2026-10-13`.

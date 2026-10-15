@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { setMuted, unlockAudio } from './audio/sfx'
-import styles from './App.module.css'
 import { ArtGallery } from './components/ArtGallery/ArtGallery'
 import { Game } from './components/Game/Game'
 import { Home } from './components/Home/Home'
 import { HowToPlay } from './components/HowToPlay/HowToPlay'
 import { Loading } from './components/Loading/Loading'
 import { Settings } from './components/Settings/Settings'
-import { debugArt } from './game/debug'
 import { DAILY_SIZE, dailyId, todayKey } from './game/daily'
+import { debugArt } from './game/debug'
 import { generateAsync, newFreePuzzle } from './game/generateAsync'
 import { createGameState } from './game/reducer'
 import { loadSettings, saveSettings } from './game/storage'
 import type { Difficulty, GameState, Mode, Puzzle, Settings as SettingsData } from './game/types'
+import styles from './App.module.css'
 
 type Screen = { name: 'home' } | { name: 'loading' } | { name: 'game'; initial: GameState }
 

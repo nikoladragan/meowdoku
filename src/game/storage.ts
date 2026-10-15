@@ -31,8 +31,8 @@ const isInt = (v: unknown, min: number, max: number): v is number =>
   typeof v === 'number' && Number.isInteger(v) && v >= min && v <= max
 const isIntArray = (v: unknown, len: number, max: number): v is number[] =>
   Array.isArray(v) && v.length === len && v.every((x) => isInt(x, 0, max))
-const MARKS: Mark[] = ['empty', 'cross', 'cat', 'miss']
-const STATUSES: Status[] = ['playing', 'won', 'lost']
+const MARKS = new Set<unknown>(['empty', 'cross', 'cat', 'miss'] satisfies Mark[])
+const STATUSES = new Set<unknown>(['playing', 'won', 'lost'] satisfies Status[])
 
 function isPuzzle(v: unknown): v is Puzzle {
   if (!isObj(v) || typeof v.id !== 'string' || !isInt(v.size, 5, 10) || !isInt(v.level, 1, 5)) return false
@@ -47,7 +47,7 @@ function isPatch(v: unknown, cells: number): v is Patch {
     v.cells.every((c) => isInt(c, 0, cells - 1)) &&
     Array.isArray(v.before) &&
     v.before.length === v.cells.length &&
-    v.before.every((m) => MARKS.includes(m as Mark))
+    v.before.every((m) => MARKS.has(m))
   )
 }
 
@@ -59,9 +59,9 @@ export function isGameState(v: unknown): v is GameState {
     DIFFICULTIES.includes(v.difficulty as Difficulty) &&
     Array.isArray(v.marks) &&
     v.marks.length === cells &&
-    v.marks.every((m) => MARKS.includes(m as Mark)) &&
+    v.marks.every((m) => MARKS.has(m)) &&
     isInt(v.lives, 0, START_LIVES) &&
-    STATUSES.includes(v.status as Status) &&
+    STATUSES.has(v.status) &&
     Array.isArray(v.history) &&
     v.history.every((p) => isPatch(p, cells)) &&
     typeof v.elapsedMs === 'number' &&

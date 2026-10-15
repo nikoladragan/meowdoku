@@ -44,11 +44,7 @@ export function Home({ onPlay, onPlayDaily, onContinue, onSettings, onHowTo }: P
         <span className={styles.version}>v{VERSION}</span>
       </div>
       <div className={styles.buttons}>
-        <button
-          type="button"
-          className={styles.daily}
-          onClick={() => (daily ? onContinue(daily) : onPlayDaily())}
-        >
+        <button type="button" className={styles.daily} onClick={() => (daily ? onContinue(daily) : onPlayDaily())}>
           <span className={styles.dailyTitle}>Daily puzzle · {formatDay(todayKey())}</span>
           <span className={styles.dailyStatus}>{dailyCard(daily)}</span>
         </button>

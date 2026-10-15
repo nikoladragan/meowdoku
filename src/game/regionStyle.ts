@@ -1,18 +1,7 @@
 import { hashString } from './rng'
 import type { Puzzle } from './types'
 
-export const REGION_NAMES = [
-  'coral',
-  'apricot',
-  'butter',
-  'sage',
-  'mint',
-  'sky',
-  'periwinkle',
-  'lilac',
-  'pink',
-  'sand',
-]
+export const REGION_NAMES = ['coral', 'apricot', 'butter', 'sage', 'mint', 'sky', 'periwinkle', 'lilac', 'pink', 'sand']
 
 // Colour offset derived from the puzzle id, so the same board does not always look the same.
 export function colorOffset(puzzle: Puzzle): number {
