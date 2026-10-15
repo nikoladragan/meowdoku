@@ -258,7 +258,7 @@ export interface Hint {
 }
 ```
 
-`hintText.ts` turns a hint into one or two short sentences. Name units as "row 3", "column 5" or by region colour ("the mint region"). Templates:
+`hintText.ts` turns a hint into one or two short sentences. Name units as "row 3", "column 5" or by region colour ("the green region"). Templates:
 
 | Kind                        | Text                                                                                                                                                             |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -343,16 +343,16 @@ Mood: cosy, soft, rounded. Light theme only.
   --radius: 16px;
   --font: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
 
-  --region-0: #f9b4ab; /* coral */
-  --region-1: #fbd38d; /* apricot */
-  --region-2: #fff1a8; /* butter */
-  --region-3: #c5e8a3; /* sage */
-  --region-4: #9fe0c4; /* mint */
-  --region-5: #a5dcf2; /* sky */
-  --region-6: #b3c0f7; /* periwinkle */
-  --region-7: #d7b8f3; /* lilac */
+  --region-0: #f9b4ab; /* red */
+  --region-1: #fbd38d; /* orange */
+  --region-2: #fff1a8; /* yellow */
+  --region-3: #c5e8a3; /* green */
+  --region-4: #9fe0c4; /* teal */
+  --region-5: #a5dcf2; /* light blue */
+  --region-6: #b3c0f7; /* blue */
+  --region-7: #d7b8f3; /* purple */
   --region-8: #f5b8de; /* pink */
-  --region-9: #d9cbb8; /* sand */
+  --region-9: #d9cbb8; /* brown */
 }
 ```
 
@@ -478,7 +478,7 @@ Implemented in `game/debug.ts`, active only when `import.meta.env.DEV` is true. 
 **How to test:**
 
 1. Open `<url>/?art` on your phone. You see the gallery; scroll through it.
-2. Cats: each of the four fur colours is clearly visible on all ten backgrounds. Look closely at the cream cat on the butter and sand backgrounds, and the grey cat on the periwinkle one.
+2. Cats: each of the four fur colours is clearly visible on all ten backgrounds. Look closely at the cream cat on the yellow and brown backgrounds, and the grey cat on the blue one.
 3. Small size: at the 10×10 cell size each cat is still recognisable as a cat, not a blob.
 4. Crosses are visible on every colour but clearly quieter than the cats.
 5. The full and lost crackers are easy to tell apart at a glance.

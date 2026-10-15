@@ -14,7 +14,7 @@ function join(parts: string[], word = 'and'): string {
   return `${parts.slice(0, -1).join(', ')} ${word} ${parts[parts.length - 1]}`
 }
 
-// Names a unit: "row 3", "column 5" or "the mint region".
+// Names a unit: "row 3", "column 5" or "the green region".
 function unitName(unit: number, puzzle: Puzzle): string {
   const n = puzzle.size
   const kind = kindOf(unit, n)
@@ -24,7 +24,7 @@ function unitName(unit: number, puzzle: Puzzle): string {
   return `the ${color} region`
 }
 
-// Names several units of the same kind: "rows 2 and 4", "the mint and sky regions".
+// Names several units of the same kind: "rows 2 and 4", "the teal and blue regions".
 function unitsName(units: number[], puzzle: Puzzle): string {
   const n = puzzle.size
   const kind = kindOf(units[0], n)

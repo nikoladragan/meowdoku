@@ -14,16 +14,16 @@
   --line-soft: rgba(0, 0, 0, 0.16);
   --font: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
 
-  --region-0: #f9b4ab; /* coral */
-  --region-1: #fbd38d; /* apricot */
-  --region-2: #fff1a8; /* butter */
-  --region-3: #c5e8a3; /* sage */
-  --region-4: #9fe0c4; /* mint */
-  --region-5: #a5dcf2; /* sky */
-  --region-6: #b3c0f7; /* periwinkle */
-  --region-7: #d7b8f3; /* lilac */
+  --region-0: #f9b4ab; /* red */
+  --region-1: #fbd38d; /* orange */
+  --region-2: #fff1a8; /* yellow */
+  --region-3: #c5e8a3; /* green */
+  --region-4: #9fe0c4; /* teal */
+  --region-5: #a5dcf2; /* light blue */
+  --region-6: #b3c0f7; /* blue */
+  --region-7: #d7b8f3; /* purple */
   --region-8: #f5b8de; /* pink */
-  --region-9: #d9cbb8; /* sand */
+  --region-9: #d9cbb8; /* brown */
 }
 
 *,
