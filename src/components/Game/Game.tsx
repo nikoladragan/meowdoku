@@ -2,9 +2,10 @@ import confetti from 'canvas-confetti'
 import { useEffect, useState } from 'react'
 import { playSound } from '../../audio/sfx'
 import { dailyKey, formatDay } from '../../game/daily'
-import { newFreePuzzle } from '../../game/generateAsync'
+import { newFreePuzzle, newLevelPuzzle } from '../../game/generateAsync'
 import { getHint, type Hint } from '../../game/hints'
 import { hintText } from '../../game/hintText'
+import { levelNumber } from '../../game/levels'
 import { formatTime } from '../../game/stats'
 import { LABELS, SIZES, type GameEvent, type GameState, type Puzzle } from '../../game/types'
 import { useDoubleTap } from '../../hooks/useDoubleTap'
@@ -37,6 +38,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
   const size = SIZES[state.difficulty]
   useGameTimer(state.status === 'playing' && !loading && !paused && !restartOpen, tick)
   const daily = state.mode === 'daily'
+  const level = state.mode === 'level' ? levelNumber(state.puzzle.id) : null
 
   // The open hint lives here, not in GameState. Any move, undo or retry dismisses it.
   // It remembers the event it was computed for, so any new event hides it without an effect.
@@ -84,8 +86,8 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
 
   const nextPuzzle = async () => {
     setLoading(true)
-    const puzzle = await newFreePuzzle(state.difficulty)
-    start('free', state.difficulty, puzzle)
+    if (level !== null) start('level', state.difficulty, await newLevelPuzzle(level + 1))
+    else start('free', state.difficulty, await newFreePuzzle(state.difficulty))
     setLoading(false)
   }
 
@@ -106,7 +108,11 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
         </button>
         <div className={styles.titles}>
           <h1 className={styles.title}>
-            {daily ? `Daily, ${formatDay(dailyKey(state.puzzle.id))}` : `${LABELS[state.difficulty]} ${size}×${size}`}
+            {daily
+              ? `Daily, ${formatDay(dailyKey(state.puzzle.id))}`
+              : level !== null
+                ? `Level ${level}`
+                : `${LABELS[state.difficulty]} ${size}×${size}`}
           </h1>
           <span className={styles.timer}>{formatTime(state.elapsedMs)}</span>
         </div>
@@ -156,6 +162,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
         <WinDialog
           lives={state.lives}
           daily={daily}
+          nextLabel={level !== null ? 'Next level' : 'Next puzzle'}
           timeMs={state.elapsedMs}
           isBest={winResult?.isBest ?? false}
           counts={winResult?.counts ?? true}
@@ -168,7 +175,7 @@ export function Game({ initial, autoCross, paused, onBack, onSettings }: Props) 
       {restartOpen && (
         <RestartDialog
           onSame={() => restart(false)}
-          onFresh={daily ? undefined : () => restart(true)}
+          onFresh={state.mode === 'free' ? () => restart(true) : undefined}
           onClose={() => setRestartOpen(false)}
         />
       )}

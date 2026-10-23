@@ -35,9 +35,9 @@ describe('recordWin', () => {
   })
 
   it('files the daily under its own key', () => {
-    const r = recordWin(EMPTY_STATS, won({ mode: 'daily', difficulty: 'hard' }))
+    const r = recordWin(EMPTY_STATS, won({ mode: 'daily', difficulty: 'extreme' }))
     expect(r.stats.daily.bestMs).toBe(60_000)
-    expect(r.stats.hard.wins).toBe(0)
+    expect(r.stats.extreme.wins).toBe(0)
   })
 })
 

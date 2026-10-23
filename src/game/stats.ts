@@ -6,7 +6,6 @@ export type AllStats = Record<StatsKey, Stats>
 export const EMPTY_STATS: AllStats = {
   easy: { wins: 0, bestMs: null },
   normal: { wins: 0, bestMs: null },
-  hard: { wins: 0, bestMs: null },
   extreme: { wins: 0, bestMs: null },
   daily: { wins: 0, bestMs: null },
 }

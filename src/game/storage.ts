@@ -7,6 +7,7 @@ const PREFIX = 'meowdoku:v1:'
 const gameKey = (mode: Mode) => `${PREFIX}game:${mode}`
 const SETTINGS_KEY = `${PREFIX}settings`
 const STATS_KEY = `${PREFIX}stats`
+const LEVEL_KEY = `${PREFIX}level`
 
 // The parsed value under `key`, or null if it is missing, malformed or storage is unavailable.
 function read(key: string): unknown {
@@ -55,7 +56,7 @@ export function isGameState(v: unknown): v is GameState {
   if (!isObj(v) || !isPuzzle(v.puzzle)) return false
   const cells = v.puzzle.size * v.puzzle.size
   return (
-    (v.mode === 'free' || v.mode === 'daily') &&
+    (v.mode === 'free' || v.mode === 'daily' || v.mode === 'level') &&
     DIFFICULTIES.includes(v.difficulty as Difficulty) &&
     Array.isArray(v.marks) &&
     v.marks.length === cells &&
@@ -122,4 +123,14 @@ export function loadStats(): AllStats {
 
 export function saveStats(stats: AllStats): void {
   write(STATS_KEY, stats)
+}
+
+// How many levels have been cleared; the next one to play is this plus one.
+export function loadLevelsCleared(): number {
+  const v = read(LEVEL_KEY)
+  return isInt(v, 0, 1e9) ? v : 0
+}
+
+export function saveLevelsCleared(n: number): void {
+  write(LEVEL_KEY, n)
 }

@@ -3,7 +3,7 @@ import { generatePuzzle } from './generator'
 import { clearGame, loadGame } from './storage'
 import type { GameState, Puzzle } from './types'
 
-export const DAILY_SIZE = 9
+export const DAILY_SIZE = 10
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const pad = (n: number) => String(n).padStart(2, '0')

@@ -31,7 +31,7 @@ Every puzzle has exactly one solution and can be solved by logic alone, with no 
 | Feedback   | Synthesised sound effects (Web Audio, no audio files) and CSS animations. No vibration: iOS gives web pages no usable way to trigger it                                              |
 | Backend    | None. Puzzles are generated in the browser, progress is in `localStorage`                                                                                                            |
 
-Out of scope for this version: desktop layout, keyboard controls and shortcuts, streaks, leaderboards, campaign levels, drag-to-cross, dark mode, accounts, PWA/offline install. Do not build these.
+Out of scope for this version: desktop layout, keyboard controls and shortcuts, streaks, leaderboards, drag-to-cross, dark mode, accounts, PWA/offline install. Do not build these.
 
 ## 3. Stack and setup
 

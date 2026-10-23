@@ -3,7 +3,7 @@ import { hashString, mulberry32, randInt, shuffle, type Rng } from './rng'
 import { DIRS, isConnectedWithout, solve } from './solver'
 import type { Puzzle } from './types'
 
-// Bump 'v1' whenever the generator, logic solver or level table changes.
+// Part of every seed. Never change it: levels and dailies must stay the same for everyone (see README).
 export const GENERATOR_VERSION = 'v1'
 
 // A random valid cat placement. One cat per row and column already rules out
@@ -100,8 +100,9 @@ export function passesQuality(n: number, regions: number[]): boolean {
   return singles <= 1 && Math.max(...sizes) <= Math.ceil(n * n * 0.3)
 }
 
-export function generatePuzzle(id: string, n: number): Puzzle {
-  const [minLevel, maxLevel] = GRADE_RANGE[n] ?? [1, 5]
+// `range` overrides the size's usual [min, max] hardest technique (levels use it to ramp up).
+export function generatePuzzle(id: string, n: number, range = GRADE_RANGE[n] ?? [1, 5]): Puzzle {
+  const [minLevel, maxLevel] = range
   const rng = mulberry32(hashString(`${GENERATOR_VERSION}:${id}:${n}`))
   for (;;) {
     const solution = randomSolution(rng, n)

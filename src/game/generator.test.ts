@@ -39,6 +39,6 @@ describe.each([5, 7, 9, 10])('generator %dx%d', (n) => {
 
 describe('daily snapshot', () => {
   it('stays stable for a fixed id', () => {
-    expect(generatePuzzle('daily-2026-10-12', 9)).toMatchSnapshot()
+    expect(generatePuzzle('daily-2026-10-12', 10)).toMatchSnapshot()
   })
 })

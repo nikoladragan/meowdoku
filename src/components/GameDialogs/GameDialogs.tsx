@@ -6,6 +6,7 @@ import styles from './GameDialogs.module.css'
 interface WinProps {
   lives: number
   daily: boolean
+  nextLabel: string
   timeMs: number
   isBest: boolean
   counts: boolean
@@ -14,7 +15,7 @@ interface WinProps {
   onHome: () => void
 }
 
-export function WinDialog({ lives, daily, timeMs, isBest, counts, hintsUsed, onNext, onHome }: WinProps) {
+export function WinDialog({ lives, daily, nextLabel, timeMs, isBest, counts, hintsUsed, onNext, onHome }: WinProps) {
   return (
     <Dialog title="Purrfect!">
       <p className={styles.text}>You solved the puzzle.</p>
@@ -35,7 +36,7 @@ export function WinDialog({ lives, daily, timeMs, isBest, counts, hintsUsed, onN
       <div className={styles.actions}>
         {!daily && (
           <button type="button" className={styles.primary} onClick={onNext}>
-            Next puzzle
+            {nextLabel}
           </button>
         )}
         <button type="button" className={daily ? styles.primary : styles.secondary} onClick={onHome}>
@@ -48,7 +49,7 @@ export function WinDialog({ lives, daily, timeMs, isBest, counts, hintsUsed, onN
 
 interface RestartProps {
   onSame: () => void
-  // Absent for the daily puzzle, which has no other puzzle to swap to.
+  // Absent for the daily puzzle and levels, which have no other puzzle to swap to.
   onFresh?: () => void
   onClose: () => void
 }

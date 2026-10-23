@@ -6,9 +6,11 @@ import {
   clearGame,
   DEFAULT_SETTINGS,
   loadGame,
+  loadLevelsCleared,
   loadSettings,
   loadStats,
   saveGame,
+  saveLevelsCleared,
   saveSettings,
   saveStats,
 } from './storage'
@@ -123,9 +125,30 @@ describe('stats', () => {
     expect(loadStats()).toEqual(EMPTY_STATS)
     saveStats({ ...EMPTY_STATS, easy: { wins: 3, bestMs: 41_000 } })
     expect(loadStats().easy).toEqual({ wins: 3, bestMs: 41_000 })
-    store.set('meowdoku:v1:stats', '{"easy":{"wins":"x","bestMs":5},"hard":{"wins":2,"bestMs":null}}')
+    store.set('meowdoku:v1:stats', '{"easy":{"wins":"x","bestMs":5},"extreme":{"wins":2,"bestMs":null}}')
     const s = loadStats()
     expect(s.easy).toEqual({ wins: 0, bestMs: null })
-    expect(s.hard).toEqual({ wins: 2, bestMs: null })
+    expect(s.extreme).toEqual({ wins: 2, bestMs: null })
+  })
+
+  it('drops stats for the removed 9×9 mode', () => {
+    store.set('meowdoku:v1:stats', '{"hard":{"wins":2,"bestMs":1000}}')
+    expect(loadStats()).toEqual(EMPTY_STATS)
+  })
+})
+
+describe('levels cleared', () => {
+  it('defaults to 0, round-trips and ignores malformed values', () => {
+    expect(loadLevelsCleared()).toBe(0)
+    saveLevelsCleared(12)
+    expect(loadLevelsCleared()).toBe(12)
+    store.set('meowdoku:v1:level', '-3')
+    expect(loadLevelsCleared()).toBe(0)
+  })
+
+  it('round-trips a level game', () => {
+    const s = createGameState('level', 'extreme', puzzle)
+    saveGame(s)
+    expect(loadGame('level')).toEqual(s)
   })
 })

@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { playSound } from '../audio/sfx'
+import { levelNumber } from '../game/levels'
 import { createGameState, reducer } from '../game/reducer'
 import { recordWin } from '../game/stats'
-import { clearGame, loadStats, saveGame, saveStats } from '../game/storage'
+import { clearGame, loadLevelsCleared, loadStats, saveGame, saveLevelsCleared, saveStats } from '../game/storage'
 import type { Difficulty, GameEvent, GameState, Mode, Puzzle } from '../game/types'
 
 export function useGame(initial: () => GameState, autoCross: boolean) {
   const [state, dispatch] = useReducer(reducer, undefined, initial)
 
-  // Free play is only worth resuming while unfinished; a finished game is cleared.
+  // Free play and levels are only worth resuming while unfinished; a finished game is cleared.
   useEffect(() => {
-    if (state.mode === 'free' && state.status !== 'playing') clearGame('free')
+    if (state.mode !== 'daily' && state.status !== 'playing') clearGame(state.mode)
     else saveGame(state)
   }, [state])
 
@@ -30,8 +31,14 @@ export function useGame(initial: () => GameState, autoCross: boolean) {
     const e = state.lastEvent
     if (e?.kind !== 'win' || e === handled.current) return
     handled.current = e
-    const r = recordWin(loadStats(), state)
-    saveStats(r.stats)
+    // Levels only track progress, not best times.
+    let r = { counts: true, isBest: false }
+    if (state.mode === 'level') saveLevelsCleared(Math.max(loadLevelsCleared(), levelNumber(state.puzzle.id)))
+    else {
+      const win = recordWin(loadStats(), state)
+      saveStats(win.stats)
+      r = win
+    }
     setWinResult({ counts: r.counts, isBest: r.isBest })
   }, [state])
 

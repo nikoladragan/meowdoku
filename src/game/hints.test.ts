@@ -142,7 +142,7 @@ describe('getHint', () => {
     let seen = 0
     for (let s = 0; s < 30; s++) {
       const hard = generatePuzzle(`free-hint-${s}`, 9)
-      let state = createGameState('free', 'hard', hard)
+      let state = createGameState('free', 'extreme', hard)
       while (state.status === 'playing') {
         const hint = getHint(state)
         if (hint.kind === 'blocks') {

@@ -1,9 +1,10 @@
-export type Difficulty = 'easy' | 'normal' | 'hard' | 'extreme'
-export const SIZES: Record<Difficulty, number> = { easy: 5, normal: 7, hard: 9, extreme: 10 }
+// 'extreme' is shown as "Hard". The key stays so saved 10×10 stats carry over.
+export type Difficulty = 'easy' | 'normal' | 'extreme'
+export const SIZES: Record<Difficulty, number> = { easy: 5, normal: 7, extreme: 10 }
 export const DIFFICULTIES = Object.keys(SIZES) as Difficulty[]
 
 export interface Puzzle {
-  id: string // 'free-<uint32>' or 'daily-YYYY-MM-DD'
+  id: string // 'free-<uint32>', 'daily-YYYY-MM-DD' or 'level-<n>'
   size: number
   regions: number[] // length size*size, regions[row * size + col] = region index 0..size-1
   solution: number[] // length size, solution[row] = column of that row's cat
@@ -12,7 +13,7 @@ export interface Puzzle {
 
 // 'miss' is a cross left by a wrong cat guess. It is permanent: not undoable and not clearable.
 export type Mark = 'empty' | 'cross' | 'cat' | 'miss'
-export type Mode = 'free' | 'daily'
+export type Mode = 'free' | 'daily' | 'level'
 export type Status = 'playing' | 'won' | 'lost'
 
 export interface GameEvent {
@@ -55,6 +56,5 @@ export interface Stats {
 export const LABELS: Record<Difficulty, string> = {
   easy: 'Easy',
   normal: 'Normal',
-  hard: 'Hard',
-  extreme: 'Extreme',
+  extreme: 'Hard',
 }

@@ -17,7 +17,7 @@ describe('daily', () => {
   it('gives the same puzzle for the same date', () => {
     const a = dailyPuzzle('2026-10-12')
     expect(a.id).toBe(dailyId('2026-10-12'))
-    expect(a.size).toBe(9)
+    expect(a.size).toBe(10)
     expect(dailyPuzzle('2026-10-12')).toEqual(a)
   })
 

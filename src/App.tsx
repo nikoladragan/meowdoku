@@ -8,7 +8,7 @@ import { Loading } from './components/Loading/Loading'
 import { Settings } from './components/Settings/Settings'
 import { DAILY_SIZE, dailyId, todayKey } from './game/daily'
 import { debugArt } from './game/debug'
-import { generateAsync, newFreePuzzle } from './game/generateAsync'
+import { generateAsync, newFreePuzzle, newLevelPuzzle } from './game/generateAsync'
 import { createGameState } from './game/reducer'
 import { loadSettings, saveSettings } from './game/storage'
 import type { Difficulty, GameState, Mode, Puzzle, Settings as SettingsData } from './game/types'
@@ -53,7 +53,8 @@ export default function App() {
   }
 
   const play = (difficulty: Difficulty) => launchGame('free', difficulty, () => newFreePuzzle(difficulty))
-  const playDaily = () => launchGame('daily', 'hard', () => generateAsync(dailyId(todayKey()), DAILY_SIZE))
+  const playDaily = () => launchGame('daily', 'extreme', () => generateAsync(dailyId(todayKey()), DAILY_SIZE))
+  const playLevel = (level: number) => launchGame('level', 'extreme', () => newLevelPuzzle(level))
 
   const home = () => {
     launch.current++
@@ -74,6 +75,7 @@ export default function App() {
         <Home
           onPlay={play}
           onPlayDaily={playDaily}
+          onPlayLevel={playLevel}
           onContinue={(initial) => setScreen({ name: 'game', initial })}
           onSettings={() => setSettingsOpen(true)}
           onHowTo={() => setHowToOpen(true)}
